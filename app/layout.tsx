@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
+import PWAInstaller from "@/components/layout/PWAInstaller";
 import "./globals.css";
 
 const inter = Inter({
@@ -12,6 +13,15 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: "Cope — Tu copiloto financiero",
   description: "Aprende, ahorra, invierte. Sin complicarte.",
+  manifest: "/manifest.json",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "Cope",
+  },
+  formatDetection: {
+    telephone: false,
+  },
 };
 
 export const viewport: Viewport = {
@@ -19,6 +29,7 @@ export const viewport: Viewport = {
   initialScale: 1,
   maximumScale: 5,
   themeColor: "#0F766E",
+  viewportFit: "cover",
 };
 
 export default function RootLayout({
@@ -28,7 +39,18 @@ export default function RootLayout({
 }) {
   return (
     <html lang="es" className={inter.variable}>
-      <body>{children}</body>
+      <head>
+        <link rel="icon" href="/icon.svg" type="image/svg+xml" />
+        <link rel="apple-touch-icon" href="/icon-192.png" />
+        <link rel="manifest" href="/manifest.json" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+        <meta name="apple-mobile-web-app-title" content="Cope" />
+      </head>
+      <body>
+        <PWAInstaller />
+        {children}
+      </body>
     </html>
   );
 }
