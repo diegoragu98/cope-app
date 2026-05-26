@@ -1,8 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import LandingPage from '@/components/LandingPage';
-import OnboardingFlow from '@/components/OnboardingFlow';
+import LandingPage from '@/components/features/LandingPage';
+import OnboardingFlow from '@/components/features/OnboardingFlow';
 
 export default function Home() {
   const [currentPage, setCurrentPage] = useState<'landing' | 'onboarding' | 'dashboard'>('landing');
