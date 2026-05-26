@@ -13,7 +13,10 @@
       "Bash(git branch *)",
       "Bash(git push *)",
       "Bash(gh auth *)",
-      "Bash(curl -s https://cope-app.vercel.app/)"
+      "Bash(curl -s https://cope-app.vercel.app/)",
+      "Bash(ssh-keygen -t ed25519 -C \"diego.ramirez@llabana.com\" -f ~/.ssh/id_ed25519 -N \"\")",
+      "Read(//Users/diegoramirez/.ssh/**)",
+      "Bash(ssh-keyscan -H github.com >> ~/.ssh/known_hosts 2>/dev/null && \\\\ *)"
     ]
   }
 }
