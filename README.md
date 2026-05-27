@@ -1,6 +1,14 @@
 # Cope — Tu copiloto financiero
 
-> Educación financiera interactiva para México. Aprende, ahorra, invierte. Sin complicarte.
+> Cope es la app que enseña a los mexicanos lo que nadie nos enseñó: qué hacer con nuestro dinero. Te ayuda a entender tu sueldo, organizar tu presupuesto y dar tus primeros pasos en inversión — todo en lenguaje normal, sin tecnicismos.
+
+## 📚 Documentación estratégica
+
+Para entender la visión completa de Cope, consulta estos documentos:
+
+- **[PLAN.md](./PLAN.md)** — Visión inicial, promesa de usuario, stack técnico y plan de ejecución en 8 fases
+- **[STRATEGY.md](./STRATEGY.md)** — Estrategia integral con análisis de personas, arquitectura de experiencia, modelo de negocio, roadmap de 12 meses, principios guía y rutas de validación
+- **[EXCEL-MAPPING.md](./EXCEL-MAPPING.md)** — Mapeo detallado del MVP de Diego (Excel funcional) a las features de Cope, con priorización en 4 Tiers de construcción
 
 ## 🎯 ¿Qué es Cope?
 
