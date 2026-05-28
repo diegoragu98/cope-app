@@ -1,18 +1,17 @@
 // Tipos de datos para el onboarding
 
 export interface DiagnosticAnswers {
-  salary: string | number;
-  hasDebts: string;
-  debtAmount: string | number;
-  savings: string | number;
+  name: string;
+  salary: string;
+  incomeSource: string;
+  currentMoney: string;
   spendingType: string;
-  savingsPercentage: number;
+  savingHabit: string;
   hasCreditCard: string;
 }
 
 export interface OnboardingData {
   name: string;
-  birthDate: string; // ISO format: YYYY-MM-DD
   diagnostic?: DiagnosticAnswers;
   completedAt?: string;
 }
