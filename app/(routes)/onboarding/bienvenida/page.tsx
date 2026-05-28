@@ -13,13 +13,15 @@ export default function OnboardingWelcomePage() {
 
   useEffect(() => {
     // Leer nombre desde localStorage
-    const name = getUserName();
-    if (!name) {
+    const fullName = getUserName();
+    if (!fullName) {
       // Si no hay nombre, redirigir a la Pantalla 0
       router.push('/onboarding');
       return;
     }
-    setUserName(name);
+    // Extraer solo el primer nombre
+    const firstName = fullName.split(' ')[0];
+    setUserName(firstName);
     setIsLoading(false);
   }, [router]);
 
