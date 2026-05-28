@@ -12,11 +12,10 @@ import { getFirstName } from '@/lib/utils';
 interface DiagnosticState {
   name: string;
   salary: string;
-  hasDebts: string;
-  debtAmount: string;
-  savings: string;
+  incomeSource: string;
+  currentMoney: string;
   spendingType: string;
-  savingsPercentage: number;
+  savingHabit: string;
   hasCreditCard: string;
 }
 
@@ -28,11 +27,10 @@ export default function DiagnosticoPage() {
   const [answers, setAnswers] = useState<DiagnosticState>({
     name: '',
     salary: '',
-    hasDebts: '',
-    debtAmount: '',
-    savings: '',
+    incomeSource: '',
+    currentMoney: '',
     spendingType: '',
-    savingsPercentage: 20,
+    savingHabit: '',
     hasCreditCard: '',
   });
 
@@ -53,16 +51,23 @@ export default function DiagnosticoPage() {
     },
     {
       step: 3,
-      id: 'hasDebts',
-      question: (name: string) => `${getFirstName(name)}, ¿tienes deudas activas? (tarjeta de crédito, préstamo, etc.)`,
-      type: 'yesno',
+      id: 'incomeSource',
+      question: (name: string) => `${getFirstName(name)}, ¿de dónde viene principalmente tu dinero?`,
+      type: 'select',
+      options: [
+        { value: 'salary', label: '💼 Trabajo de planta (sueldo fijo)' },
+        { value: 'freelance', label: '💻 Freelance / proyectos' },
+        { value: 'family', label: '👨‍👩‍👧 Apoyo de familia' },
+        { value: 'mixed', label: '🎨 Combinación de varios' },
+      ],
     },
     {
       step: 4,
-      id: 'savings',
-      question: (name: string) => `¿Cuánto tienes ahorrado actualmente, ${getFirstName(name)}?`,
+      id: 'currentMoney',
+      question: (name: string) => `Si abrieras tu app de banco ahora, ¿cuánto verías?`,
       type: 'currency',
       placeholder: 'Ej. $5,000',
+      hint: 'Aunque sea aproximado. Solo para saber dónde empiezas.',
     },
     {
       step: 5,
@@ -77,11 +82,15 @@ export default function DiagnosticoPage() {
     },
     {
       step: 6,
-      id: 'savingsPercentage',
-      question: (name: string) => `De tu sueldo, ¿qué % intentas ahorrar, ${getFirstName(name)}?`,
-      type: 'slider',
-      min: 0,
-      max: 100,
+      id: 'savingHabit',
+      question: (name: string) => `${getFirstName(name)}, cuando termina el mes, ¿qué pasa con tu sueldo?`,
+      type: 'select',
+      options: [
+        { value: 'all_spent', label: '💸 Se me va todo (o casi todo)' },
+        { value: 'sometimes_left', label: '😅 Me sobra un poquito a veces' },
+        { value: 'always_save', label: '💰 Trato de guardar siempre algo' },
+        { value: 'have_system', label: '🎯 Ya tengo un sistema para ahorrar' },
+      ],
     },
     {
       step: 7,
@@ -211,7 +220,7 @@ export default function DiagnosticoPage() {
                 value={answers[currentQ.id as keyof DiagnosticState] || ''}
                 onChange={(value) => handleAnswer(value)}
                 placeholder={currentQ.placeholder}
-                hint="Es aproximado, no necesita ser exacto"
+                hint={(currentQ as any).hint || 'Es aproximado, no necesita ser exacto'}
                 autoFocus
               />
             )}

@@ -10,11 +10,10 @@ import { getFirstName } from '@/lib/utils';
 interface DiagnosticData {
   name: string;
   salary: string;
-  hasDebts: string;
-  debtAmount: string;
-  savings: string;
+  incomeSource: string;
+  currentMoney: string;
   spendingType: string;
-  savingsPercentage: number;
+  savingHabit: string;
   hasCreditCard: string;
 }
 
@@ -47,82 +46,137 @@ export default function ResultadoPage() {
 
     const diagnostic = data.diagnostic as DiagnosticData;
 
-    // Calculate Cope Score
-    let score = 0;
+    // Calculate Cope Score with new formula
+    let rawScore = 0;
     const salary = parseInt(diagnostic.salary) || 0;
-    const savings = parseInt(diagnostic.savings) || 0;
-    const debtAmount = parseInt(diagnostic.debtAmount) || 0;
-    const savingsPercentage = diagnostic.savingsPercentage || 0;
+    const currentMoney = parseInt(diagnostic.currentMoney) || 0;
+    const monthsOfSavings = salary > 0 ? currentMoney / salary : 0;
 
-    // Criterio 1: Savings > 1 month salary (25 points)
-    if (savings > salary) score += 25;
-
-    // Criterio 2: Savings percentage >= 20% (25 points)
-    if (savingsPercentage >= 20) score += 25;
-
-    // Criterio 3: No debts OR debts < 30% of salary (25 points)
-    if (diagnostic.hasDebts === 'no' || (debtAmount / salary < 0.3)) {
-      score += 25;
+    // Criterio 1: Saving Habit (5-35 points)
+    switch (diagnostic.savingHabit) {
+      case 'all_spent':
+        rawScore += 5;
+        break;
+      case 'sometimes_left':
+        rawScore += 15;
+        break;
+      case 'always_save':
+        rawScore += 25;
+        break;
+      case 'have_system':
+        rawScore += 35;
+        break;
     }
 
-    // Criterio 4: Has credit card (25 points)
-    if (diagnostic.hasCreditCard === 'yes') score += 25;
+    // Criterio 2: Current Money vs Salary (5-35 points)
+    if (monthsOfSavings < 0.5) {
+      rawScore += 5;
+    } else if (monthsOfSavings < 1) {
+      rawScore += 15;
+    } else if (monthsOfSavings < 3) {
+      rawScore += 25;
+    } else {
+      rawScore += 35;
+    }
 
-    // Ensure min 10, max 100
-    score = Math.max(10, Math.min(100, score));
+    // Criterio 3: Credit Card Usage (5-25 points)
+    // For now, we'll use a simplified version since the question is yes/no
+    // We can enhance this in Pantalla 4 if needed
+    if (diagnostic.hasCreditCard === 'yes') {
+      rawScore += 15; // Default to middle value for yes
+    } else {
+      rawScore += 5;
+    }
+
+    // Criterio 4: Spending Type (5-15 points)
+    switch (diagnostic.spendingType) {
+      case 'impulsive':
+        rawScore += 5;
+        break;
+      case 'mixed':
+        rawScore += 10;
+        break;
+      case 'disciplined':
+        rawScore += 15;
+        break;
+    }
+
+    // Normalize from 20-110 range to 1-100
+    // Min raw: 5+5+5+5 = 20, Max raw: 35+35+25+15 = 110
+    const minScore = 20;
+    const maxScore = 110;
+    const score = Math.round(((rawScore - minScore) / (maxScore - minScore)) * 99) + 1;
 
     // Determine message based on score
     let message = '';
     let messageSubtitle = '';
 
-    if (score < 30) {
-      message = 'Es normal estar aquí';
-      messageSubtitle = 'Vamos a mejorar tu situación financiera juntos';
-    } else if (score < 50) {
-      message = 'Vas muy bien';
-      messageSubtitle = 'Tenemos oportunidades para mejorar';
-    } else if (score < 75) {
-      message = 'Excelente progreso';
-      messageSubtitle = 'Estás en el camino correcto';
+    if (score <= 30) {
+      message = 'Estás empezando';
+      messageSubtitle = 'Es normal. Vamos a construir juntos.';
+    } else if (score <= 60) {
+      message = 'Vas bien encaminado';
+      messageSubtitle = 'Hay cosas que podemos mejorar.';
+    } else if (score <= 80) {
+      message = 'Tienes buenos hábitos';
+      messageSubtitle = 'Vamos a optimizar.';
     } else {
-      message = 'Eres un maestro del dinero';
-      messageSubtitle = 'Ahora vamos a optimizar aún más';
+      message = 'Vas muy bien';
+      messageSubtitle = 'Cope te ayuda a ir al siguiente nivel.';
     }
 
-    // Calculate metric levels
-    const savingsLevel = savings > salary ? 'alto' : savings > salary * 0.5 ? 'medio' : 'bajo';
-    const debtLevel = diagnostic.hasDebts === 'no' ? 'bajo' : debtAmount / salary < 0.3 ? 'medio' : 'alto';
-    const savingsRateLevel = savingsPercentage >= 20 ? 'alto' : savingsPercentage >= 10 ? 'medio' : 'bajo';
-    const creditLevel = diagnostic.hasCreditCard === 'yes' ? 'alto' : 'bajo';
+    // Calculate metric levels based on new data
+    const moneyLevel = monthsOfSavings < 0.5 ? 'bajo' : monthsOfSavings < 1 ? 'medio' : 'alto';
+
+    const savingHabitLabel =
+      diagnostic.savingHabit === 'all_spent' ? 'Se me va todo' :
+      diagnostic.savingHabit === 'sometimes_left' ? 'Me sobra a veces' :
+      diagnostic.savingHabit === 'always_save' ? 'Guardo siempre' :
+      'Tengo sistema';
+
+    const savingHabitLevel =
+      diagnostic.savingHabit === 'all_spent' ? 'bajo' :
+      diagnostic.savingHabit === 'sometimes_left' ? 'medio' :
+      diagnostic.savingHabit === 'always_save' ? 'medio' :
+      'alto';
+
+    const incomeSourceLabel =
+      diagnostic.incomeSource === 'salary' ? 'Trabajo fijo' :
+      diagnostic.incomeSource === 'freelance' ? 'Freelance' :
+      diagnostic.incomeSource === 'family' ? 'Familia' :
+      'Mixto';
+
+    const creditCardLevel = diagnostic.hasCreditCard === 'yes' ? 'medio' : 'bajo';
+    const creditCardLabel = diagnostic.hasCreditCard === 'yes' ? 'Tengo TDC' : 'Sin TDC';
 
     const metricCards: MetricCard[] = [
       {
-        title: 'Patrimonio',
-        level: savingsLevel,
-        value: savings ? `$${savings.toLocaleString()}` : 'Sin datos',
+        title: 'Tu Dinero',
+        level: moneyLevel,
+        value: currentMoney ? `$${currentMoney.toLocaleString()}` : 'Sin datos',
         icon: '💰',
-        color: savingsLevel === 'alto' ? '#10b981' : savingsLevel === 'medio' ? '#f59e0b' : '#ef4444',
+        color: moneyLevel === 'alto' ? '#10b981' : moneyLevel === 'medio' ? '#f59e0b' : '#ef4444',
       },
       {
-        title: 'Deuda',
-        level: debtLevel,
-        value: diagnostic.hasDebts === 'no' ? 'Sin deuda' : `$${debtAmount.toLocaleString() || '0'}`,
-        icon: '💳',
-        color: debtLevel === 'bajo' ? '#10b981' : debtLevel === 'medio' ? '#f59e0b' : '#ef4444',
-      },
-      {
-        title: 'Ahorro',
-        level: savingsRateLevel,
-        value: `${savingsPercentage}%`,
+        title: 'Hábito de Ahorro',
+        level: savingHabitLevel,
+        value: savingHabitLabel,
         icon: '📈',
-        color: savingsRateLevel === 'alto' ? '#10b981' : savingsRateLevel === 'medio' ? '#f59e0b' : '#ef4444',
+        color: savingHabitLevel === 'alto' ? '#10b981' : savingHabitLevel === 'medio' ? '#f59e0b' : '#ef4444',
       },
       {
-        title: 'Educación',
+        title: 'Origen del Dinero',
         level: 'medio',
-        value: 'En progreso',
-        icon: '🎓',
+        value: incomeSourceLabel,
+        icon: '💼',
         color: '#06b6d4',
+      },
+      {
+        title: 'Tarjeta de Crédito',
+        level: creditCardLevel,
+        value: creditCardLabel,
+        icon: '💳',
+        color: creditCardLevel === 'alto' ? '#10b981' : '#f59e0b',
       },
     ];
 
