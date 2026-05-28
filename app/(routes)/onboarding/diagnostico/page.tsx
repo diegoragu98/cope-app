@@ -6,6 +6,7 @@ import { ChevronLeft } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Container } from '@/components/ui/Container';
 import { getUserName, getOnboardingData, saveOnboardingData } from '@/lib/onboarding/storage';
+import type { DiagnosticAnswers } from '@/lib/onboarding/types';
 
 export default function DiagnosticoPage() {
   const router = useRouter();
@@ -13,7 +14,7 @@ export default function DiagnosticoPage() {
   const firstName = fullName ? fullName.split(' ')[0] : 'amiga';
 
   const [currentQuestion, setCurrentQuestion] = useState(0);
-  const [answers, setAnswers] = useState({
+  const [answers, setAnswers] = useState<DiagnosticAnswers>({
     salary: '',
     hasDebts: '',
     debtAmount: '',
@@ -27,7 +28,15 @@ export default function DiagnosticoPage() {
     // Cargar respuestas guardadas si existen
     const data = getOnboardingData();
     if (data.diagnostic) {
-      setAnswers(data.diagnostic);
+      setAnswers({
+        salary: data.diagnostic.salary || '',
+        hasDebts: data.diagnostic.hasDebts || '',
+        debtAmount: data.diagnostic.debtAmount || '',
+        savings: data.diagnostic.savings || '',
+        spendingType: data.diagnostic.spendingType || '',
+        savingsPercentage: data.diagnostic.savingsPercentage || 50,
+        hasCreditCard: data.diagnostic.hasCreditCard || '',
+      });
     }
   }, []);
 
