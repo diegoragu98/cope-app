@@ -1,0 +1,39 @@
+// Pantalla 3: Tu Diagnóstico Cope
+// A construir en próxima sesión
+
+'use client';
+
+import { useRouter } from 'next/navigation';
+import { Button } from '@/components/ui/Button';
+import { Container } from '@/components/ui/Container';
+import { getUserName } from '@/lib/onboarding/storage';
+
+export default function ResultadoPage() {
+  const router = useRouter();
+  const fullName = getUserName();
+  const firstName = fullName ? fullName.split(' ')[0] : 'amiga';
+
+  return (
+    <div className="bg-cope-bg min-h-screen flex flex-col items-center justify-center px-4 py-8">
+      <Container size="sm">
+        <div className="text-center">
+          <div className="mb-8">
+            <div className="text-6xl font-bold text-cope-primary mb-2">Cope</div>
+          </div>
+
+          <h1 className="text-4xl font-bold text-cope-text mb-4">
+            Tu Diagnóstico Cope 📊
+          </h1>
+          <p className="text-gray-600 mb-8">Próximamente - Aquí irá tu Cope Score...</p>
+
+          <Button
+            onClick={() => router.push('/onboarding/diagnostico')}
+            variant="ghost"
+          >
+            Volver
+          </Button>
+        </div>
+      </Container>
+    </div>
+  );
+}
