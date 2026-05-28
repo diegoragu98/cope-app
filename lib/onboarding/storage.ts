@@ -31,5 +31,5 @@ export function getUserName(): string {
 
 export function hasUserInfo(): boolean {
   const data = getOnboardingData();
-  return !!(data.name && data.birthDate);
+  return !!data.name;
 }
