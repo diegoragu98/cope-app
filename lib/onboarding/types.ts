@@ -2,12 +2,13 @@
 
 export interface DiagnosticAnswers {
   name: string;
-  salary: string;
+  firstName: string;
+  lifeStage: string;
   incomeSource: string;
-  currentMoney: string;
-  spendingType: string;
-  savingHabit: string;
-  hasCreditCard: string;
+  spendingStyle: string;
+  creditCard: string;
+  investmentExperience: string;
+  compoundInterestKnowledge: string;
 }
 
 export interface OnboardingData {

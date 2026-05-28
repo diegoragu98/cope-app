@@ -4,19 +4,19 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/Button';
 import { Container } from '@/components/ui/Container';
-import { CurrencyInput } from '@/components/ui/CurrencyInput';
 import { OnboardingProgress } from '@/components/onboarding/OnboardingProgress';
 import { saveOnboardingData } from '@/lib/onboarding/storage';
 import { getFirstName } from '@/lib/utils';
 
 interface DiagnosticState {
   name: string;
-  salary: string;
+  firstName: string;
+  lifeStage: string;
   incomeSource: string;
-  currentMoney: string;
-  spendingType: string;
-  savingHabit: string;
-  hasCreditCard: string;
+  spendingStyle: string;
+  creditCard: string;
+  investmentExperience: string;
+  compoundInterestKnowledge: string;
 }
 
 const TOTAL_STEPS = 7;
@@ -26,77 +26,91 @@ export default function DiagnosticoPage() {
   const [currentStep, setCurrentStep] = useState(1);
   const [answers, setAnswers] = useState<DiagnosticState>({
     name: '',
-    salary: '',
+    firstName: '',
+    lifeStage: '',
     incomeSource: '',
-    currentMoney: '',
-    spendingType: '',
-    savingHabit: '',
-    hasCreditCard: '',
+    spendingStyle: '',
+    creditCard: '',
+    investmentExperience: '',
+    compoundInterestKnowledge: '',
   });
 
   const questions = [
     {
       step: 1,
       id: 'name',
-      question: '¡Hola! Antes de empezar, ¿cómo te llamas?',
+      question: '¿Cómo te llamas?',
       type: 'text',
       placeholder: 'Tu nombre',
     },
     {
       step: 2,
-      id: 'salary',
-      question: (name: string) => `Perfecto ${getFirstName(name)}, ahora cuéntame: ¿cuál es tu sueldo mensual aproximado?`,
-      type: 'currency',
-      placeholder: 'Ej. $12,000',
+      id: 'lifeStage',
+      question: (name: string) => `${getFirstName(name)}, ¿en qué etapa de la vida estás?`,
+      type: 'select',
+      options: [
+        { value: 'student', label: '🎓 Estudiante' },
+        { value: 'recent_grad', label: '💼 Recién egresado' },
+        { value: 'professional', label: '🚀 Profesionista con experiencia' },
+        { value: 'couple', label: '💑 En pareja / pensando en casarme' },
+        { value: 'family', label: '👨‍👩‍👧 Familia formada' },
+      ],
     },
     {
       step: 3,
       id: 'incomeSource',
-      question: (name: string) => `${getFirstName(name)}, ¿de dónde viene principalmente tu dinero?`,
+      question: (name: string) => `¿De dónde viene principalmente tu dinero?`,
       type: 'select',
       options: [
         { value: 'salary', label: '💼 Trabajo de planta (sueldo fijo)' },
         { value: 'freelance', label: '💻 Freelance / proyectos' },
         { value: 'family', label: '👨‍👩‍👧 Apoyo de familia' },
-        { value: 'mixed', label: '🎨 Combinación de varios' },
+        { value: 'mixed', label: '🔀 Combinación de varios' },
       ],
     },
     {
       step: 4,
-      id: 'currentMoney',
-      question: (name: string) => `Si abrieras tu app de banco ahora, ¿cuánto verías?`,
-      type: 'currency',
-      placeholder: 'Ej. $5,000',
-      hint: 'Aunque sea aproximado. Solo para saber dónde empiezas.',
-    },
-    {
-      step: 5,
-      id: 'spendingType',
+      id: 'spendingStyle',
       question: (name: string) => `${getFirstName(name)}, ¿cómo es tu forma de gastar?`,
       type: 'select',
       options: [
-        { value: 'impulsive', label: 'Más impulsivo (gasto cuando se me antoja)' },
-        { value: 'disciplined', label: 'Más planeado (me gusta saber a dónde va mi dinero)' },
-        { value: 'mixed', label: 'Mixto (a veces uno, a veces otro)' },
+        { value: 'impulsive', label: '⚡ Más impulsivo (gasto cuando se me antoja)' },
+        { value: 'planned', label: '📋 Más planeado (me gusta saber a dónde va mi dinero)' },
+        { value: 'mixed', label: '🔀 Mixto (a veces uno, a veces otro)' },
+      ],
+    },
+    {
+      step: 5,
+      id: 'creditCard',
+      question: (name: string) => `¿Tienes tarjeta de crédito?`,
+      type: 'select',
+      options: [
+        { value: 'use_well', label: '💳 Sí, la uso bien' },
+        { value: 'afraid', label: '😰 Sí, pero me da miedo' },
+        { value: 'no', label: '❌ No tengo' },
       ],
     },
     {
       step: 6,
-      id: 'savingHabit',
-      question: (name: string) => `${getFirstName(name)}, cuando termina el mes, ¿qué pasa con tu sueldo?`,
+      id: 'investmentExperience',
+      question: (name: string) => `¿Has invertido tu dinero alguna vez?`,
       type: 'select',
       options: [
-        { value: 'all_spent', label: '💸 Se me va todo (o casi todo)' },
-        { value: 'sometimes_left', label: '😅 Me sobra un poquito a veces' },
-        { value: 'always_save', label: '💰 Trato de guardar siempre algo' },
-        { value: 'have_system', label: '🎯 Ya tengo un sistema para ahorrar' },
+        { value: 'experienced', label: '📈 Sí, ya sé cómo' },
+        { value: 'basic', label: '🌱 Sí, algo básico' },
+        { value: 'never', label: '❌ Nunca he invertido' },
       ],
     },
     {
       step: 7,
-      id: 'hasCreditCard',
-      question: (name: string) => `Última pregunta, ${getFirstName(name)}: ¿tienes tarjeta de crédito?`,
-      type: 'yesno',
+      id: 'compoundInterestKnowledge',
+      question: (name: string) => `Una última pregunta: ¿qué es mejor para tu futuro?`,
+      type: 'select',
+      options: [
+        { value: 'option_a', label: '💰 Ahorrar $1,000 al mes desde los 35 años' },
+        { value: 'option_b', label: '⏰ Ahorrar $500 al mes desde los 25 años' },
+        { value: 'unsure', label: '🤷 No estoy seguro' },
+      ],
     },
   ];
 
@@ -108,10 +122,15 @@ export default function DiagnosticoPage() {
 
   const handleAnswer = (value: any) => {
     if (!currentQ) return;
-    setAnswers({
+    const newAnswers = {
       ...answers,
       [currentQ.id]: value,
-    });
+    };
+    // When name is updated, also update firstName
+    if (currentQ.id === 'name') {
+      newAnswers.firstName = getFirstName(value);
+    }
+    setAnswers(newAnswers);
   };
 
   const handleNext = () => {
@@ -212,41 +231,6 @@ export default function DiagnosticoPage() {
                 autoFocus
                 className="w-full px-4 py-3 rounded-lg border-2 border-gray-300 focus:border-cope-primary focus:outline-none text-lg"
               />
-            )}
-
-            {currentQ?.type === 'currency' && (
-              <CurrencyInput
-                value={answers[currentQ.id as keyof DiagnosticState] || ''}
-                onChange={(value) => handleAnswer(value)}
-                placeholder={currentQ.placeholder}
-                hint={(currentQ as any).hint || 'Es aproximado, no necesita ser exacto'}
-                autoFocus
-              />
-            )}
-
-            {currentQ?.type === 'yesno' && (
-              <div className="flex gap-3">
-                <button
-                  onClick={() => handleAnswer('yes')}
-                  className={`flex-1 py-3 rounded-lg font-semibold transition ${
-                    answers[currentQ.id as keyof DiagnosticState] === 'yes'
-                      ? 'bg-cope-primary text-white'
-                      : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                  }`}
-                >
-                  Sí
-                </button>
-                <button
-                  onClick={() => handleAnswer('no')}
-                  className={`flex-1 py-3 rounded-lg font-semibold transition ${
-                    answers[currentQ.id as keyof DiagnosticState] === 'no'
-                      ? 'bg-cope-primary text-white'
-                      : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                  }`}
-                >
-                  No
-                </button>
-              </div>
             )}
 
             {currentQ?.type === 'select' && (
