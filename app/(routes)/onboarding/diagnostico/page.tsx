@@ -4,8 +4,10 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/Button';
 import { Container } from '@/components/ui/Container';
+import { CurrencyInput } from '@/components/ui/CurrencyInput';
 import { OnboardingProgress } from '@/components/onboarding/OnboardingProgress';
 import { saveOnboardingData } from '@/lib/onboarding/storage';
+import { getFirstName } from '@/lib/utils';
 
 interface DiagnosticState {
   name: string;
@@ -30,7 +32,7 @@ export default function DiagnosticoPage() {
     debtAmount: '',
     savings: '',
     spendingType: '',
-    savingsPercentage: 50,
+    savingsPercentage: 20,
     hasCreditCard: '',
   });
 
@@ -45,38 +47,38 @@ export default function DiagnosticoPage() {
     {
       step: 2,
       id: 'salary',
-      question: (name: string) => `Perfecto ${name}, ahora cuéntame: ¿cuál es tu sueldo mensual aproximado?`,
+      question: (name: string) => `Perfecto ${getFirstName(name)}, ahora cuéntame: ¿cuál es tu sueldo mensual aproximado?`,
       type: 'currency',
-      placeholder: '$15,000',
+      placeholder: 'Ej. $12,000',
     },
     {
       step: 3,
       id: 'hasDebts',
-      question: (name: string) => `${name}, ¿tienes deudas activas? (tarjeta de crédito, préstamo, etc.)`,
+      question: (name: string) => `${getFirstName(name)}, ¿tienes deudas activas? (tarjeta de crédito, préstamo, etc.)`,
       type: 'yesno',
     },
     {
       step: 4,
       id: 'savings',
-      question: (name: string) => `¿Cuánto tienes ahorrado actualmente, ${name}?`,
+      question: (name: string) => `¿Cuánto tienes ahorrado actualmente, ${getFirstName(name)}?`,
       type: 'currency',
-      placeholder: '$2,000',
+      placeholder: 'Ej. $5,000',
     },
     {
       step: 5,
       id: 'spendingType',
-      question: (name: string) => `${name}, ¿cómo es tu forma de gastar?`,
+      question: (name: string) => `${getFirstName(name)}, ¿cómo es tu forma de gastar?`,
       type: 'select',
       options: [
-        { value: 'impulsive', label: 'Impulsivo (gasto sin pensar)' },
-        { value: 'disciplined', label: 'Disciplinado (planeo mis gastos)' },
+        { value: 'impulsive', label: 'Más impulsivo (gasto cuando se me antoja)' },
+        { value: 'disciplined', label: 'Más planeado (me gusta saber a dónde va mi dinero)' },
         { value: 'mixed', label: 'Mixto (a veces uno, a veces otro)' },
       ],
     },
     {
       step: 6,
       id: 'savingsPercentage',
-      question: (name: string) => `De tu sueldo, ¿qué % intentas ahorrar, ${name}?`,
+      question: (name: string) => `De tu sueldo, ¿qué % intentas ahorrar, ${getFirstName(name)}?`,
       type: 'slider',
       min: 0,
       max: 100,
@@ -84,7 +86,7 @@ export default function DiagnosticoPage() {
     {
       step: 7,
       id: 'hasCreditCard',
-      question: (name: string) => `Última pregunta, ${name}: ¿tienes tarjeta de crédito?`,
+      question: (name: string) => `Última pregunta, ${getFirstName(name)}: ¿tienes tarjeta de crédito?`,
       type: 'yesno',
     },
   ];
@@ -205,17 +207,13 @@ export default function DiagnosticoPage() {
             )}
 
             {currentQ?.type === 'currency' && (
-              <div>
-                <input
-                  type="number"
-                  placeholder={currentQ.placeholder}
-                  value={answers[currentQ.id as keyof DiagnosticState] || ''}
-                  onChange={(e) => handleAnswer(e.target.value)}
-                  autoFocus
-                  className="w-full px-4 py-3 rounded-lg border-2 border-gray-300 focus:border-cope-primary focus:outline-none text-lg"
-                />
-                <p className="text-xs text-gray-500 mt-2">Es aproximado, no necesita ser exacto</p>
-              </div>
+              <CurrencyInput
+                value={answers[currentQ.id as keyof DiagnosticState] || ''}
+                onChange={(value) => handleAnswer(value)}
+                placeholder={currentQ.placeholder}
+                hint="Es aproximado, no necesita ser exacto"
+                autoFocus
+              />
             )}
 
             {currentQ?.type === 'yesno' && (
