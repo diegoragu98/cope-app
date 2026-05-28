@@ -1,20 +1,30 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { ChevronLeft } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Container } from '@/components/ui/Container';
-import { getUserName, getOnboardingData, saveOnboardingData } from '@/lib/onboarding/storage';
-import type { DiagnosticAnswers } from '@/lib/onboarding/types';
+import { OnboardingProgress } from '@/components/onboarding/OnboardingProgress';
+import { saveOnboardingData } from '@/lib/onboarding/storage';
+
+interface DiagnosticState {
+  name: string;
+  salary: string;
+  hasDebts: string;
+  debtAmount: string;
+  savings: string;
+  spendingType: string;
+  savingsPercentage: number;
+  hasCreditCard: string;
+}
+
+const TOTAL_STEPS = 7;
 
 export default function DiagnosticoPage() {
   const router = useRouter();
-  const fullName = getUserName();
-  const firstName = fullName ? fullName.split(' ')[0] : 'amiga';
-
-  const [currentQuestion, setCurrentQuestion] = useState(0);
-  const [answers, setAnswers] = useState<DiagnosticAnswers>({
+  const [currentStep, setCurrentStep] = useState(1);
+  const [answers, setAnswers] = useState<DiagnosticState>({
+    name: '',
     salary: '',
     hasDebts: '',
     debtAmount: '',
@@ -24,50 +34,38 @@ export default function DiagnosticoPage() {
     hasCreditCard: '',
   });
 
-  useEffect(() => {
-    // Cargar respuestas guardadas si existen
-    const data = getOnboardingData();
-    if (data.diagnostic) {
-      setAnswers({
-        salary: data.diagnostic.salary || '',
-        hasDebts: data.diagnostic.hasDebts || '',
-        debtAmount: data.diagnostic.debtAmount || '',
-        savings: data.diagnostic.savings || '',
-        spendingType: data.diagnostic.spendingType || '',
-        savingsPercentage: data.diagnostic.savingsPercentage || 50,
-        hasCreditCard: data.diagnostic.hasCreditCard || '',
-      });
-    }
-  }, []);
-
   const questions = [
     {
+      step: 1,
+      id: 'name',
+      question: '¡Hola! Antes de empezar, ¿cómo te llamas?',
+      type: 'text',
+      placeholder: 'Tu nombre',
+    },
+    {
+      step: 2,
       id: 'salary',
-      question: '¿Cuál es tu sueldo mensual aproximado?',
+      question: (name: string) => `Perfecto ${name}, ahora cuéntame: ¿cuál es tu sueldo mensual aproximado?`,
       type: 'currency',
       placeholder: '$15,000',
     },
     {
+      step: 3,
       id: 'hasDebts',
-      question: '¿Tienes deudas activas? (tarjeta de crédito, préstamo, etc.)',
+      question: (name: string) => `${name}, ¿tienes deudas activas? (tarjeta de crédito, préstamo, etc.)`,
       type: 'yesno',
     },
     {
-      id: 'debtAmount',
-      question: '¿Cuánto deber aproximadamente?',
-      type: 'currency',
-      placeholder: '$5,000',
-      condition: answers.hasDebts === 'yes',
-    },
-    {
+      step: 4,
       id: 'savings',
-      question: '¿Cuánto tienes ahorrado actualmente?',
+      question: (name: string) => `¿Cuánto tienes ahorrado actualmente, ${name}?`,
       type: 'currency',
       placeholder: '$2,000',
     },
     {
+      step: 5,
       id: 'spendingType',
-      question: '¿Cómo es tu forma de gastar?',
+      question: (name: string) => `${name}, ¿cómo es tu forma de gastar?`,
       type: 'select',
       options: [
         { value: 'impulsive', label: 'Impulsivo (gasto sin pensar)' },
@@ -76,28 +74,29 @@ export default function DiagnosticoPage() {
       ],
     },
     {
+      step: 6,
       id: 'savingsPercentage',
-      question: 'De tu sueldo, ¿qué % intentas ahorrar?',
+      question: (name: string) => `De tu sueldo, ¿qué % intentas ahorrar, ${name}?`,
       type: 'slider',
       min: 0,
       max: 100,
     },
     {
+      step: 7,
       id: 'hasCreditCard',
-      question: '¿Tienes tarjeta de crédito?',
+      question: (name: string) => `Última pregunta, ${name}: ¿tienes tarjeta de crédito?`,
       type: 'yesno',
     },
   ];
 
-  // Filtrar preguntas según condiciones
-  const visibleQuestions = questions.filter(
-    (q) => q.condition !== false
-  );
-
-  const currentQ = visibleQuestions[currentQuestion];
-  const progress = ((currentQuestion + 1) / visibleQuestions.length) * 100;
+  const currentQ = questions.find((q) => q.step === currentStep);
+  const questionText =
+    typeof currentQ?.question === 'function'
+      ? currentQ.question(answers.name)
+      : currentQ?.question;
 
   const handleAnswer = (value: any) => {
+    if (!currentQ) return;
     setAnswers({
       ...answers,
       [currentQ.id]: value,
@@ -105,11 +104,12 @@ export default function DiagnosticoPage() {
   };
 
   const handleNext = () => {
-    if (currentQuestion < visibleQuestions.length - 1) {
-      setCurrentQuestion(currentQuestion + 1);
+    if (currentStep < TOTAL_STEPS) {
+      setCurrentStep(currentStep + 1);
     } else {
       // Guardar respuestas y navegar a siguiente pantalla
       saveOnboardingData({
+        name: answers.name,
         diagnostic: answers,
       });
       router.push('/onboarding/resultado');
@@ -117,15 +117,16 @@ export default function DiagnosticoPage() {
   };
 
   const handleBack = () => {
-    if (currentQuestion > 0) {
-      setCurrentQuestion(currentQuestion - 1);
+    if (currentStep > 1) {
+      setCurrentStep(currentStep - 1);
     } else {
-      router.push('/onboarding/bienvenida');
+      router.push('/onboarding');
     }
   };
 
   const isAnswered = () => {
-    const value = answers[currentQ.id as keyof typeof answers];
+    if (!currentQ) return false;
+    const value = answers[currentQ.id as keyof DiagnosticState];
     if (currentQ.type === 'slider') return true;
     return value !== '';
   };
@@ -177,54 +178,52 @@ export default function DiagnosticoPage() {
       `}</style>
 
       <Container size="sm" className="flex-1 flex flex-col">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-8">
-          <button
-            onClick={handleBack}
-            className="text-cope-primary hover:text-cope-primary-dark transition"
-          >
-            <ChevronLeft size={28} />
-          </button>
-          <div className="text-sm font-semibold text-gray-600">
-            Paso {currentQuestion + 1} de {visibleQuestions.length}
-          </div>
-        </div>
-
-        {/* Progress Bar */}
-        <div className="w-full bg-gray-300 rounded-full h-1 mb-8">
-          <div
-            className="bg-cope-primary h-1 rounded-full transition-all duration-300"
-            style={{ width: `${progress}%` }}
-          />
-        </div>
+        {/* Progress */}
+        <OnboardingProgress
+          currentStep={currentStep}
+          totalSteps={TOTAL_STEPS}
+          onBack={handleBack}
+        />
 
         {/* Question */}
         <div className="flex-1 flex flex-col justify-center animate-fade-in-up">
           <h2 className="text-3xl md:text-4xl font-bold text-cope-text mb-8">
-            {currentQ.question}
+            {questionText}
           </h2>
 
           {/* Input basado en tipo */}
           <div className="space-y-6">
-            {currentQ.type === 'currency' && (
+            {currentQ?.type === 'text' && (
+              <input
+                type="text"
+                placeholder={currentQ.placeholder}
+                value={answers.name}
+                onChange={(e) => handleAnswer(e.target.value)}
+                autoFocus
+                className="w-full px-4 py-3 rounded-lg border-2 border-gray-300 focus:border-cope-primary focus:outline-none text-lg"
+              />
+            )}
+
+            {currentQ?.type === 'currency' && (
               <div>
                 <input
                   type="number"
                   placeholder={currentQ.placeholder}
-                  value={answers[currentQ.id as keyof typeof answers] || ''}
+                  value={answers[currentQ.id as keyof DiagnosticState] || ''}
                   onChange={(e) => handleAnswer(e.target.value)}
+                  autoFocus
                   className="w-full px-4 py-3 rounded-lg border-2 border-gray-300 focus:border-cope-primary focus:outline-none text-lg"
                 />
                 <p className="text-xs text-gray-500 mt-2">Es aproximado, no necesita ser exacto</p>
               </div>
             )}
 
-            {currentQ.type === 'yesno' && (
+            {currentQ?.type === 'yesno' && (
               <div className="flex gap-3">
                 <button
                   onClick={() => handleAnswer('yes')}
                   className={`flex-1 py-3 rounded-lg font-semibold transition ${
-                    answers[currentQ.id as keyof typeof answers] === 'yes'
+                    answers[currentQ.id as keyof DiagnosticState] === 'yes'
                       ? 'bg-cope-primary text-white'
                       : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
                   }`}
@@ -234,7 +233,7 @@ export default function DiagnosticoPage() {
                 <button
                   onClick={() => handleAnswer('no')}
                   className={`flex-1 py-3 rounded-lg font-semibold transition ${
-                    answers[currentQ.id as keyof typeof answers] === 'no'
+                    answers[currentQ.id as keyof DiagnosticState] === 'no'
                       ? 'bg-cope-primary text-white'
                       : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
                   }`}
@@ -244,14 +243,14 @@ export default function DiagnosticoPage() {
               </div>
             )}
 
-            {currentQ.type === 'select' && (
+            {currentQ?.type === 'select' && (
               <div className="space-y-3">
                 {currentQ.options?.map((opt) => (
                   <button
                     key={opt.value}
                     onClick={() => handleAnswer(opt.value)}
                     className={`w-full p-4 rounded-lg text-left font-semibold transition ${
-                      answers[currentQ.id as keyof typeof answers] === opt.value
+                      answers[currentQ.id as keyof DiagnosticState] === opt.value
                         ? 'bg-cope-primary text-white'
                         : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
                     }`}
@@ -262,7 +261,7 @@ export default function DiagnosticoPage() {
               </div>
             )}
 
-            {currentQ.type === 'slider' && (
+            {currentQ?.type === 'slider' && (
               <div>
                 <input
                   type="range"
@@ -270,7 +269,6 @@ export default function DiagnosticoPage() {
                   max={currentQ.max}
                   value={answers.savingsPercentage}
                   onChange={(e) => handleAnswer(parseInt(e.target.value))}
-                  className="w-full"
                 />
                 <div className="text-center mt-4">
                   <span className="text-4xl font-bold text-cope-primary">
@@ -296,7 +294,7 @@ export default function DiagnosticoPage() {
             className="flex-1"
             size="lg"
           >
-            {currentQuestion === visibleQuestions.length - 1 ? 'Ver resultado' : 'Siguiente'}
+            {currentStep === TOTAL_STEPS ? 'Ver resultado' : 'Siguiente'}
           </Button>
         </div>
       </Container>
