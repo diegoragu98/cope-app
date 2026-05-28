@@ -84,7 +84,7 @@ export default function ResultadoPage() {
         <div className="bg-white rounded-2xl p-8 text-center shadow-lg mb-12 animate-scale-in">
           <div className="text-7xl mb-6">{profile.emoji}</div>
           <h2 className="text-3xl font-bold text-cope-text mb-4">
-            Eres un {profile.typeName}
+            Eres {profile.typeName}
           </h2>
           <p className="text-lg text-gray-700 leading-relaxed">
             {profile.description}

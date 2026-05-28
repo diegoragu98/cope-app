@@ -46,22 +46,22 @@ export function calculateProfile(diagnostic: any): ProfileResult {
 
   if (score <= 3) {
     type = 'initiante';
-    typeName = 'El Iniciante';
+    typeName = 'Iniciante';
     emoji = '🌱';
     description = 'Estás en el mejor momento para construir hábitos financieros desde cero. Sin vicios que corregir, sin malos hábitos que romper. Cope te va a guiar paso a paso.';
   } else if (score <= 6) {
     type = 'explorer';
-    typeName = 'El Explorador';
+    typeName = 'Explorador';
     emoji = '🧭';
     description = 'Ya empezaste a tomar tu dinero en serio, pero hay áreas clave donde Cope te va a ayudar muchísimo. Tienes una base sólida sobre la cual construir.';
   } else if (score <= 9) {
     type = 'strategist';
-    typeName = 'El Estratega';
+    typeName = 'Estratega';
     emoji = '⚙️';
     description = 'Tienes buenas bases. Cope te ayuda a optimizar lo que ya haces y llegar al siguiente nivel. Estás más adelante que el 70% de los mexicanos.';
   } else {
     type = 'builder';
-    typeName = 'El Constructor';
+    typeName = 'Constructor';
     emoji = '🏛️';
     description = 'Estás en el top 10% de los mexicanos en educación financiera. Cope te ayuda a refinar tu sistema, planear cosas grandes, y proteger lo que has construido.';
   }
