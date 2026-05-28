@@ -176,7 +176,7 @@ export default function ResultadoPage() {
         level: creditCardLevel,
         value: creditCardLabel,
         icon: '💳',
-        color: creditCardLevel === 'alto' ? '#10b981' : '#f59e0b',
+        color: creditCardLevel === 'medio' ? '#10b981' : '#ef4444',
       },
     ];
 
