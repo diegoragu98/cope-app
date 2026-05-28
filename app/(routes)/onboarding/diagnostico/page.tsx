@@ -138,7 +138,6 @@ export default function DiagnosticoPage() {
   const isAnswered = () => {
     if (!currentQ) return false;
     const value = answers[currentQ.id as keyof DiagnosticState];
-    if (currentQ.type === 'slider') return true;
     return value !== '';
   };
 
@@ -268,22 +267,6 @@ export default function DiagnosticoPage() {
               </div>
             )}
 
-            {currentQ?.type === 'slider' && (
-              <div>
-                <input
-                  type="range"
-                  min={currentQ.min}
-                  max={currentQ.max}
-                  value={answers.savingsPercentage}
-                  onChange={(e) => handleAnswer(parseInt(e.target.value))}
-                />
-                <div className="text-center mt-4">
-                  <span className="text-4xl font-bold text-cope-primary">
-                    {answers.savingsPercentage}%
-                  </span>
-                </div>
-              </div>
-            )}
           </div>
         </div>
 
