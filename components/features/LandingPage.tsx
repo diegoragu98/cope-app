@@ -1,14 +1,11 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
 import { ArrowRight, BookOpen, BarChart3, MessageCircle, AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
 import { Container } from '@/components/ui/Container';
 import { PageHeader } from '@/components/ui/PageHeader';
-
-interface LandingPageProps {
-  onStart: () => void;
-}
 
 const features = [
   {
@@ -54,7 +51,13 @@ const problems = [
   },
 ];
 
-export default function LandingPage({ onStart }: LandingPageProps) {
+export default function LandingPage() {
+  const router = useRouter();
+
+  const handleStartOnboarding = () => {
+    router.push('/onboarding');
+  };
+
   return (
     <div className="bg-cope-bg min-h-screen">
       {/* Navigation Bar */}
@@ -79,7 +82,7 @@ export default function LandingPage({ onStart }: LandingPageProps) {
             </p>
             <Button
               size="lg"
-              onClick={onStart}
+              onClick={handleStartOnboarding}
               className="inline-flex items-center gap-2"
             >
               Empezar ahora
@@ -155,7 +158,7 @@ export default function LandingPage({ onStart }: LandingPageProps) {
             <Button
               variant="secondary"
               size="lg"
-              onClick={onStart}
+              onClick={handleStartOnboarding}
               className="inline-flex items-center gap-2"
             >
               Empezar tu viaje financiero
