@@ -72,10 +72,11 @@ cope-app/
    npm install
    ```
 
-3. **Configurar variables de entorno (opcional por ahora):**
+3. **Configurar variables de entorno (Supabase):**
    ```bash
    cp .env.example .env.local
-   # Edita .env.local con tus valores
+   # Ya tienen valores configurados para el proyecto Supabase
+   # Si necesitas cambiar el proyecto, edita .env.local con tus credenciales
    ```
 
 4. **Correr el servidor de desarrollo:**
@@ -87,6 +88,53 @@ cope-app/
    ```
    http://localhost:3000
    ```
+
+## ☁️ Supabase — Base de datos en la nube
+
+Cope usa Supabase para guardar todos tus datos (cuentas, movimientos, metas) en la nube, no en tu computadora. Esto permite que los datos se sincronicen entre el Desktop (Estudio) y el Celular (Copiloto).
+
+### ¿Qué es Supabase?
+
+Supabase es PostgreSQL + autenticación + realtime + APIs automáticas. Es como Firebase pero open source y más controlable.
+
+### Conexión actual
+
+- **Proyecto:** Cope Sprint 1 (Plan Free)
+- **URL:** https://mqvfkriydwgxlofcpgyw.supabase.co
+- **Configuración:** `.env.local` (credenciales públicas, OK para este proyecto)
+- **Clientes:** 
+  - `lib/supabase/client.ts` → Para componentes en el navegador
+  - `lib/supabase/server.ts` → Para el servidor Next.js
+
+### Verificar que la conexión funciona
+
+```bash
+npm run dev
+# Luego abre http://localhost:3000/test-supabase
+# Deberías ver ✅ Conexión a Supabase exitosa
+```
+
+### Tablas en la BD (próxima sesión)
+
+Las tablas se crearán desde el archivo:
+```
+supabase/schema.sql
+```
+
+Contiene:
+- **accounts** — Tus cuentas bancarias e inversiones
+- **movements** — Entradas y salidas de dinero
+- **goals** — Metas financieras
+
+Cada tabla tiene RLS (Row Level Security) para que solo veas TUS datos.
+
+### Documentación Supabase
+
+- [Docs de Supabase](https://supabase.com/docs)
+- [Auth en Supabase](https://supabase.com/docs/guides/auth)
+- [RLS policies](https://supabase.com/docs/guides/auth/row-level-security)
+
+---
 
 ## 🌐 Deploy
 
