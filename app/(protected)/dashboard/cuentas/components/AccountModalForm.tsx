@@ -80,8 +80,10 @@ export default function AccountModalForm({ account, onClose, onSuccess }: Accoun
         }
       }
 
-      // Éxito
-      onSuccess()
+      // Éxito - recargar la página para ver los cambios
+      setTimeout(() => {
+        window.location.reload()
+      }, 500)
     } catch (err) {
       setError('Error inesperado. Intenta de nuevo.')
       setLoading(false)

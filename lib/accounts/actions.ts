@@ -88,7 +88,7 @@ export async function createAccount(input: CreateAccountInput) {
     revalidatePath('/dashboard/cuentas')
     revalidatePath('/dashboard')
 
-    return { success: true, data }
+    return { success: true, data, redirect: '/dashboard/cuentas' }
   } catch (error) {
     console.error('Exception al crear cuenta:', error)
     return { error: 'Error inesperado. Intenta de nuevo.' }
