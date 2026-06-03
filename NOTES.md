@@ -46,14 +46,22 @@
 
 ---
 
-### ⚠️ Known Bug: Server Action Form Submission
+### ⚠️ Known Bugs: Server Action Form Submissions
 
+#### Bug #1: Account Creation Form (Accounts Module)
 **Issue:** `AccountModalForm` → `createAccount` Server Action integration
 - **Symptom:** Form modal opens, fields fill correctly, but clicking "Crear" button doesn't submit successfully
 - **Evidence:** 
   - POST /dashboard/cuentas returns 200 but account not created in database
   - No error messages displayed to user
   - `window.location.reload()` added as workaround, but underlying issue persists
+
+#### Bug #2: Login Form (Auth System) ⚠️ CRITICAL
+**Issue:** `logInAction` requires retry to succeed
+- **Symptom:** User enters correct email/password, clicks "Ingresar", gets error message. Retry works immediately.
+- **Behavior:** First attempt fails with generic "Email o contraseña incorrectos" error. Second attempt succeeds without changing anything.
+- **Impact:** User experience issue, but authentication ultimately works
+- **Root Cause:** Likely same underlying issue as Account Creation form - Server Action async handling in Next.js 15
   
 **Root Cause Analysis:**
 - Server Action is being called (network request happens)
@@ -75,6 +83,10 @@
 - Check browser DevTools Network tab for actual request payload
 - Test Server Action directly with curl/Postman to isolate issue
 - Review Next.js 15 Server Action async handling patterns
+- **CRITICAL:** The login retry behavior suggests a race condition or promise resolution issue
+  - Check if logInAction is properly awaiting all async operations
+  - Verify error handling isn't swallowing legitimate errors on first attempt
+  - Consider if redirect() is causing issues (throw behavior)
 
 ---
 
