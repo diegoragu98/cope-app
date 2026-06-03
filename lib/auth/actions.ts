@@ -102,7 +102,8 @@ export async function logOutAction() {
     revalidatePath('/', 'layout')
     redirect('/login')
   } catch (error) {
-    return { error: 'Error al cerrar sesión' }
+    // Si hay error, redirigir igualmente a login
+    redirect('/login')
   }
 }
 
