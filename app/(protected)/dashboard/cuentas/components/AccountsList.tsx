@@ -13,6 +13,8 @@ interface Account {
   balance: number
   color?: string
   icon?: string
+  is_active: boolean
+  created_at: string
 }
 
 interface AccountsListProps {
