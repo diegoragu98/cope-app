@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/Button'
 import { Container } from '@/components/ui/Container'
 import AccountModalForm from './AccountModalForm'
-import AccountsList from './AccountsList'
+import AccountsTable from './AccountsTable'
 
 /**
  * COMPONENTE CLIENT: MIS CUENTAS
@@ -119,8 +119,8 @@ export default function CuentasClient({ initialAccounts }: CuentasClientProps) {
               </p>
             </div>
 
-            {/* Lista de Cuentas */}
-            <AccountsList
+            {/* Tabla de Cuentas */}
+            <AccountsTable
               accounts={accounts}
               onEdit={handleEditAccount}
               onDelete={handleAccountCreated}

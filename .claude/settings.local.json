@@ -19,7 +19,8 @@
       "Bash(ssh-keyscan -H github.com >> ~/.ssh/known_hosts 2>/dev/null && \\\\ *)",
       "Bash(curl -s http://localhost:3000)",
       "Bash(awk '{print $2}')",
-      "mcp__Claude_Preview__preview_start"
+      "mcp__Claude_Preview__preview_start",
+      "Bash(curl -X POST https://mqvfkriydwgxlofcpgyw.supabase.co/auth/v1/signup -H 'apikey: sb_publishable_OULovivyF36xnNWDB2se0g_iEWaNyIT' -H 'Content-Type: application/json' -d '{\"email\":\"direct.test@cope.local\",\"password\":\"TestPass123!\"}')"
     ]
   }
 }
