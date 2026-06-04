@@ -25,13 +25,13 @@ interface AccountModalFormProps {
 }
 
 const ACCOUNT_TYPES: { value: AccountType; label: string; emoji: string }[] = [
-  { value: 'checking', label: 'Cuenta de Cheques', emoji: '🏦' },
+  { value: 'checking', label: 'Cuenta de Débito', emoji: '🏦' },
   { value: 'savings', label: 'Cuenta de Ahorros', emoji: '🏦' },
-  { value: 'investment_rv', label: 'Inversión Variable', emoji: '📈' },
-  { value: 'investment_rf', label: 'Inversión Fija', emoji: '📊' },
-  { value: 'digital_wallet', label: 'Billetera Digital', emoji: '📱' },
+  { value: 'investment_rv', label: 'Inversión (Rendimiento Variable)', emoji: '📈' },
+  { value: 'investment_rf', label: 'Inversión (Rendimiento Fijo)', emoji: '📊' },
+  { value: 'digital_wallet', label: 'App de Pago / Fintech', emoji: '📱' },
   { value: 'cash', label: 'Efectivo', emoji: '💵' },
-  { value: 'other', label: 'Otro', emoji: '❓' },
+  { value: 'other', label: 'Otra', emoji: '❓' },
 ]
 
 export default function AccountModalForm({ account, onClose, onSuccess }: AccountModalFormProps) {
