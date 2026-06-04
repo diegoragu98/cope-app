@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { createAccount, updateAccount, type CreateAccountInput, type AccountType } from '@/lib/accounts/actions'
 import { Button } from '@/components/ui/Button'
 
@@ -34,6 +35,7 @@ const ACCOUNT_TYPES: { value: AccountType; label: string; emoji: string }[] = [
 ]
 
 export default function AccountModalForm({ account, onClose, onSuccess }: AccountModalFormProps) {
+  const router = useRouter()
   const [formData, setFormData] = useState({
     name: account?.name || '',
     institution: account?.institution || '',
@@ -82,10 +84,8 @@ export default function AccountModalForm({ account, onClose, onSuccess }: Accoun
         }
       }
 
-      // Éxito - recargar la página para ver los cambios
-      setTimeout(() => {
-        window.location.reload()
-      }, 500)
+      // Éxito - refrescar la página manteniendo la UX moderna de Next.js
+      router.refresh()
     } catch (err) {
       setError('Error inesperado. Intenta de nuevo.')
       setLoading(false)
