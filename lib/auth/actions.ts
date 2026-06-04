@@ -55,9 +55,9 @@ export async function signUpAction(email: string, password: string, fullName: st
       return { error: error.message || 'Error al crear cuenta' }
     }
 
-    // Éxito: Redirigir a dashboard
+    // Éxito: Revalidar caché y retornar success (el cliente maneja la redirección)
     revalidatePath('/', 'layout')
-    redirect('/dashboard')
+    return { success: true }
   } catch (error) {
     return { error: 'Error inesperado. Intenta de nuevo.' }
   }
@@ -83,9 +83,9 @@ export async function logInAction(email: string, password: string) {
       return { error: 'Email o contraseña incorrectos' }
     }
 
-    // Éxito: Redirigir a dashboard
+    // Éxito: Revalidar caché y retornar success (el cliente maneja la redirección)
     revalidatePath('/', 'layout')
-    redirect('/dashboard')
+    return { success: true }
   } catch (error) {
     return { error: 'Error inesperado. Intenta de nuevo.' }
   }

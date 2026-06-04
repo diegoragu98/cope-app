@@ -1,12 +1,14 @@
 'use client'
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { Button } from '@/components/ui/Button'
 import { Container } from '@/components/ui/Container'
 import { logInAction } from '@/lib/auth/actions'
 
 export default function LoginPage() {
+  const router = useRouter()
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -35,8 +37,13 @@ export default function LoginPage() {
     if (result?.error) {
       setError(result.error)
       setLoading(false)
+      return
     }
-    // Si no hay error, el server action redirige automáticamente a /dashboard
+
+    // Si es exitoso, redirigir a dashboard
+    if (result?.success) {
+      router.push('/dashboard')
+    }
   }
 
   return (
