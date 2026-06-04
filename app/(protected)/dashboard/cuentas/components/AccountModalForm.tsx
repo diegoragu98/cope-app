@@ -84,8 +84,9 @@ export default function AccountModalForm({ account, onClose, onSuccess }: Accoun
         }
       }
 
-      // Éxito - refrescar la página manteniendo la UX moderna de Next.js
+      // Éxito - refrescar la página y cerrar el modal
       router.refresh()
+      onClose()
     } catch (err) {
       setError('Error inesperado. Intenta de nuevo.')
       setLoading(false)
