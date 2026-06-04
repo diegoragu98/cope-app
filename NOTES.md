@@ -1,17 +1,71 @@
 # Cope App Development Notes
 
-## Sprint 1 Status: 95% Complete ✅
+## Estado al cierre de Sesión 5 (Junio 2026)
 
-### ✅ What's Built
+### Sprint 1 - Progreso: ~60%
 
-#### Database Schema
+✅ **COMPLETADO:**
+- Migración SQL ejecutada (accounts modificada, credit_cards y credit_card_payments creadas)
+- Server Action createAccount funcional (router.refresh pattern)
+- Sidebar de navegación con highlight de ruta actual
+- Módulo Mis Cuentas con tabla compacta
+- 8 cuentas reales de Diego cargadas
+- Multi-moneda MXN/USD funcionando
+- Etiquetas mejoradas de tipos de cuenta:
+  * Cuenta de Débito (checking)
+  * Cuenta de Ahorros (savings)
+  * Inversión (Rendimiento Fijo)
+  * Inversión (Rendimiento Variable)
+  * App de Pago / Fintech
+  * Efectivo
+  * Otra
+- Totales por moneda al final de la tabla
+- Tabla compacta (8 cuentas + header + totales visibles sin scroll en desktop)
+
+⏸️ **PENDIENTE para próxima sesión:**
+- Módulo Mis Tarjetas (TDC) con empty state
+- Server Actions para credit_cards CRUD
+- Modal "Actualizar Saldo" de TDC
+- Modal "Registrar Pago" con lógica de afectar cuenta origen
+- Página historial /dashboard/tarjetas/historial
+- Tabla mensual estilo Excel
+- Gráfico de tendencia con Recharts
+- Actualizar dashboard principal con números reales
+- Refinar formato de input de saldo (no formatea ceros a la izquierda)
+- Arreglar scroll del modal (botones se cortan)
+
+### Datos de Diego para TDC (próxima sesión)
+- AMEX: corte día 13, pago día 27, saldo ~$4,102.78
+- Santander Like U: corte día 12, pago día 1 mes siguiente, saldo ~$7,876.59
+
+### Bugs Resueltos en esta Sesión
+- ✅ Redirect exceptions en Server Actions (auth signin/signup)
+- ✅ Modal no cerraba después de crear cuenta
+- ✅ Router.refresh() timing issue
+- ✅ Falta de navegación en /dashboard/cuentas
+- ✅ Tabla poco escalable (cards grid cambiadas a tabla compacta)
+
+### Tiempo estimado próxima sesión
+1.5-2 horas para módulo Mis Tarjetas
+
+### Notas para próxima sesión
+- Diego confirmó que 8 cuentas + tabla compacta es el layout ideal
+- Tabla agrupada por tipo NO funcionó visualmente (revirtió)
+- Sidebar está listo y no necesita cambios
+- Modal de agregar/editar cuentas sigue siendo el template para TDC
+
+---
+
+## Sprint 1 Architecture Overview
+
+### ✅ Database Schema
 - **Supabase Migration 002**: Separates credit cards from accounts
-  - `accounts` table: Banking/investment accounts (checking, savings, investment_rv/rf, digital_wallet, cash, other)
+  - `accounts` table: Banking/investment accounts (7 types)
   - `credit_cards` table: Credit card management (saldo, cutoff_day, payment_day, currency)
   - `credit_card_payments` table: Payment history with source account tracking
   - RLS policies: User isolation for all tables
 
-#### Authentication System (Sprint 1.0 - Complete)
+### ✅ Authentication System (Complete)
 - ✅ Signup with email/password/name
 - ✅ Login with email/password
 - ✅ Logout functionality
@@ -19,173 +73,93 @@
 - ✅ Server-side middleware validation
 - ✅ Session persistence via cookies
 
-#### Accounts Module (Sprint 1.1 - Structure Complete, Debug Pending)
+### ✅ Accounts Module (Sprint 1.1 - Complete)
 **Routes & Components:**
-- `/dashboard/cuentas` - Main accounts page
+- `/dashboard` - Main dashboard with sidebar
+- `/dashboard/cuentas` - Accounts listing page
   - `page.tsx` (Server Component) - Loads accounts from database
   - `components/CuentasClient.tsx` (Client Component) - UI interactions & modal state
-  - `components/AccountModalForm.tsx` - Add/edit form (7 account types)
-  - `components/AccountsList.tsx` - Display accounts with balance, edit, delete actions
+  - `components/AccountModalForm.tsx` - Add/edit form
+  - `components/AccountsTable.tsx` - Compact table display with totals
 
 **Server Actions (`lib/accounts/actions.ts`):**
-- `createAccount(input)` - Add new account to portfolio
-- `updateAccount(input)` - Edit saldo, name, institution, type, currency
+- `createAccount(input)` - Add new account (with router.refresh pattern)
+- `updateAccount(input)` - Edit account details
 - `deleteAccount(accountId)` - Remove account
-- `getUserAccounts()` - Fetch all user accounts (with RLS isolation)
-- `getTotalPatrimony()` - Calculate total assets in MXN (USD conversion at 17x rate)
+- `getUserAccounts()` - Fetch all user accounts (RLS isolated)
+- `getTotalPatrimony()` - Calculate total assets in MXN
 
 **Features Implemented:**
-- Empty state: Friendly UI when no accounts (💰 emoji + CTA)
-- Multi-currency: MXN/USD with exchange rate conversion
-- Account types: 7 options (checking, savings, investment_rv/rf, digital_wallet, cash, other)
+- Empty state: Friendly UI when no accounts
+- Multi-currency: MXN/USD with exchange rate conversion (17x)
+- Account types: 7 options with emojis and improved labels
 - Patrimony total: Auto-calculated sum in MXN
 - Confirmation dialogs: Prevent accidental deletion
-- Visual indicators: Color-coded accounts, type badges, saldo display
-- Form validation: Server-side email/data validation
-- Security: User isolation via Supabase RLS (no client-side trust)
+- Compact table: Zebra striping, hover effects, click-to-edit
+- Form validation: Server-side for all inputs
+- Security: User isolation via Supabase RLS
 
----
-
-### ⚠️ Known Bugs: Server Action Form Submissions
-
-#### Bug #1: Account Creation Form (Accounts Module)
-**Issue:** `AccountModalForm` → `createAccount` Server Action integration
-- **Symptom:** Form modal opens, fields fill correctly, but clicking "Crear" button doesn't submit successfully
-- **Evidence:** 
-  - POST /dashboard/cuentas returns 200 but account not created in database
-  - No error messages displayed to user
-  - `window.location.reload()` added as workaround, but underlying issue persists
-
-#### Bug #2: Login Form (Auth System) ⚠️ CRITICAL
-**Issue:** `logInAction` requires retry to succeed
-- **Symptom:** User enters correct email/password, clicks "Ingresar", gets error message. Retry works immediately.
-- **Behavior:** First attempt fails with generic "Email o contraseña incorrectos" error. Second attempt succeeds without changing anything.
-- **Impact:** User experience issue, but authentication ultimately works
-- **Root Cause:** Likely same underlying issue as Account Creation form - Server Action async handling in Next.js 15
-  
-**Root Cause Analysis:**
-- Server Action is being called (network request happens)
-- Return value with `{ success: true, data }` is not being properly handled
-- Likely issue: Form submission event handling in Client Component not properly triggering Server Action execution
-- Alternative hypothesis: Supabase insert is failing silently despite returning 200 status
-
-**Debug Steps Already Taken:**
-1. ✅ Restructured page.tsx → Server Component (loads accounts)
-2. ✅ Created CuentasClient.tsx → Client Component (handles modals)
-3. ✅ Verified Server Action code has try/catch error handling
-4. ✅ Confirmed database migration executed successfully
-5. ✅ Checked server logs - no error traces
-6. ✅ Added window.location.reload() workaround (incomplete solution)
-
-**Next Debug Session Should:**
-- Add console.log statements in `handleSubmit()` to trace execution flow
-- Verify form event listeners are properly attached
-- Check browser DevTools Network tab for actual request payload
-- Test Server Action directly with curl/Postman to isolate issue
-- Review Next.js 15 Server Action async handling patterns
-- **CRITICAL:** The login retry behavior suggests a race condition or promise resolution issue
-  - Check if logInAction is properly awaiting all async operations
-  - Verify error handling isn't swallowing legitimate errors on first attempt
-  - Consider if redirect() is causing issues (throw behavior)
-
----
-
-### 📋 Remaining Tasks for Sprint 1 Completion
-
-#### Phase 1: Fix Server Action (CRITICAL)
-1. Debug form submission in AccountModalForm
-2. Test createAccount Server Action in isolation
-3. Verify database insert actually succeeds
-4. Implement proper success feedback (close modal, refresh data)
-
-#### Phase 2: Complete Accounts Module (After Phase 1 fix)
-1. ✅ Test full CRUD flow (Create, Read, Update, Delete)
-2. ✅ Add your 6 real accounts (Santander, BanBajío, Nu, CETES, GBM, USA banks)
-3. ✅ Verify patrimony total calculation
-4. ✅ Test multi-currency conversion
-
-#### Phase 3: Credit Cards Module
-1. Build `/dashboard/tarjetas` (mirrors accounts structure)
-2. Server Actions for credit_cards CRUD
-3. Modal form with cutoff_day, payment_day
-4. Payment registration flow (links to source_account)
-
-#### Phase 4: Dashboard Updates
-1. Update main `/dashboard` to show:
-   - "Mis Cuentas" card: contador + patrimonio total
-   - "Mis Tarjetas" card: contador + total a pagar este mes
-2. Add navigation links to `/dashboard/cuentas` and `/dashboard/tarjetas`
-
-#### Phase 5: Historial & Analytics
-1. Build `/dashboard/historial` (payment history)
-2. Monthly table view (TDC × months)
-3. Trend gráfico with Recharts
+### ✅ Navigation System
+**Sidebar (`components/Sidebar.tsx`):**
+- Fixed left sidebar with Cope branding
+- Navigation links: Dashboard, Mis Cuentas, Mis Tarjetas
+- Placeholder links: Movimientos, Metas, Análisis (disabled)
+- User info + logout button at bottom
+- Active route highlighting in Cope green
+- Responsive (desktop-first, mobile TODO)
 
 ---
 
 ### 🏗️ Architecture Decisions
 
 **Server/Client Split:**
+- `/dashboard/layout.tsx` = Server wrapper (protects all sub-routes)
 - `page.tsx` = Server Component (fetches accounts from DB)
 - `CuentasClient.tsx` = Client Component (modal state, interactions)
 - `AccountModalForm.tsx` = Client Component (form state, submission)
-- Server Actions = RPC-style, no API routes per client requirements
+- `Sidebar.tsx` = Client Component (navigation, usePathname for highlighting)
+- Server Actions = RPC-style, no API routes
 
 **Security Enforcement:**
-- All financial routes protected by middleware (no client-side trust)
+- All routes under `/dashboard` protected via middleware
 - Server-side validation on all inputs
 - Supabase RLS ensures user data isolation
-- Password never exposed to browser
+- Passwords never exposed to browser
 
 **State Management:**
-- React useState for UI state (modal open/close, editing account)
-- Supabase for persistent data (server source of truth)
-- No Redux/Context (keep it simple for now)
-
----
+- React useState for UI state (modals, editing)
+- Supabase for persistent data
+- No Redux/Context
 
 ### 📁 File Structure
-
 ```
-app/(protected)/dashboard/
-├── cuentas/
-│   ├── page.tsx (Server Component)
-│   ├── layout.tsx
-│   └── components/
-│       ├── CuentasClient.tsx (Client Component)
-│       ├── AccountModalForm.tsx (Form with Server Action)
-│       └── AccountsList.tsx (Display)
-├── tarjetas/ (TODO)
+app/(protected)/
+├── dashboard/
+│   ├── layout.tsx (Global layout with Sidebar)
+│   ├── page.tsx (Dashboard home)
+│   ├── components/
+│   │   └── Sidebar.tsx (Navigation)
+│   └── cuentas/
+│       ├── page.tsx (Accounts listing)
+│       └── components/
+│           ├── CuentasClient.tsx
+│           ├── AccountModalForm.tsx
+│           ├── AccountsTable.tsx
+│           └── CuentasClient.tsx
+├── tarjetas/ (TODO next session)
 └── historial/ (TODO)
 
 lib/
-├── auth/
-│   └── actions.ts (signup, login, logout, getCurrentUser)
-├── accounts/
-│   └── actions.ts (account CRUD + getTotalPatrimony)
+├── auth/actions.ts (signup, login, logout, getCurrentUser)
+├── accounts/actions.ts (account CRUD + getTotalPatrimony)
 └── supabase/
-    ├── client.ts (browser client)
-    ├── server.ts (server client)
-    └── middleware.ts (session validation)
+    ├── client.ts
+    ├── server.ts
+    └── middleware.ts
 ```
 
 ---
 
-### 🔗 Related Issues
-- GitHub Issues: None yet (create after debugging Server Action)
-- Vercel Deployment: Passing (no auth issues, database connected)
-
----
-
-### 📝 Notes for Next Session
-- Diego has real data ready: 6 accounts, 2 credit cards
-- Empty states tested and look great
-- Modal UI is solid, just needs form submission fix
-- Once fixed, full CRUD should be straightforward
-- Credit cards module will be similar architecture
-
----
-
-**Last Updated:** 2026-06-03  
-**Status:** Sprint 1.1 Structure Complete, Awaiting Server Action Debug  
-**Author:** Claude (via Diego's requirements)
+**Last Updated:** 2026-06-04  
+**Status:** Sprint 1 ~60% - Accounts module complete, Tarjetas module next  
+**Next Session:** Build Mis Tarjetas module (1.5-2 hours estimated)
