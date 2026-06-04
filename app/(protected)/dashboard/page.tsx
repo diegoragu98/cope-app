@@ -1,4 +1,5 @@
 import { redirect } from 'next/navigation'
+import Link from 'next/link'
 import { Button } from '@/components/ui/Button'
 import { Container } from '@/components/ui/Container'
 import { getCurrentUser, logOutAction } from '@/lib/auth/actions'
@@ -75,16 +76,18 @@ export default async function DashboardPage() {
 
         {/* Placeholder Sections */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {/* Accounts Placeholder */}
-          <div className="bg-white rounded-lg shadow-lg p-8 text-center">
-            <h3 className="text-2xl font-bold text-cope-text mb-4">
-              💰 Mis Cuentas
-            </h3>
-            <p className="text-gray-600 mb-6">
-              Aquí irán tus cuentas bancarias e inversiones
-            </p>
-            <Button disabled>Próximamente</Button>
-          </div>
+          {/* Accounts */}
+          <Link href="/dashboard/cuentas">
+            <div className="bg-white rounded-lg shadow-lg p-8 text-center hover:shadow-xl transition-shadow cursor-pointer h-full">
+              <h3 className="text-2xl font-bold text-cope-text mb-4">
+                💰 Mis Cuentas
+              </h3>
+              <p className="text-gray-600 mb-6">
+                Gestiona tus cuentas bancarias e inversiones
+              </p>
+              <Button>Ir a Cuentas</Button>
+            </div>
+          </Link>
 
           {/* Movements Placeholder */}
           <div className="bg-white rounded-lg shadow-lg p-8 text-center">
