@@ -44,6 +44,8 @@ export interface UpdateAccountInput {
  * Agrega una nueva cuenta a tu portafolio
  */
 export async function createAccount(input: CreateAccountInput) {
+  console.log('[createAccount] Starting...', { name: input.name })
+
   // Validaciones básicas
   if (!input.name || !input.type || !input.currency) {
     return { error: 'Por favor completa los campos requeridos' }
@@ -54,15 +56,21 @@ export async function createAccount(input: CreateAccountInput) {
   }
 
   try {
+    console.log('[createAccount] Creating Supabase client...')
     const supabase = await createServerClient()
 
     // Obtener usuario actual (para validar que es tu cuenta)
+    console.log('[createAccount] Getting current user...')
     const { data: authData } = await supabase.auth.getUser()
     if (!authData.user) {
+      console.log('[createAccount] No user logged in')
       return { error: 'No estás logueado' }
     }
 
+    console.log('[createAccount] User authenticated:', authData.user.id)
+
     // Crear la cuenta en Supabase
+    console.log('[createAccount] Inserting account into Supabase...')
     const { data, error } = await supabase
       .from('accounts')
       .insert({
@@ -80,17 +88,21 @@ export async function createAccount(input: CreateAccountInput) {
       .single()
 
     if (error) {
-      console.error('Error al crear cuenta:', error)
+      console.error('[createAccount] Supabase insert error:', error)
       return { error: 'Error al crear la cuenta. Intenta de nuevo.' }
     }
 
+    console.log('[createAccount] Account created successfully:', data?.id)
+
     // Revalidar la página para que se vea la cuenta nueva
+    console.log('[createAccount] Revalidating paths...')
     revalidatePath('/dashboard/cuentas')
     revalidatePath('/dashboard')
 
+    console.log('[createAccount] Success!')
     return { success: true }
   } catch (error) {
-    console.error('Exception al crear cuenta:', error)
+    console.error('[createAccount] Exception:', error)
     return { error: 'Error inesperado. Intenta de nuevo.' }
   }
 }
