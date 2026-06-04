@@ -86,7 +86,8 @@ export default function AccountModalForm({ account, onClose, onSuccess }: Accoun
 
       // Éxito - refrescar la página y cerrar el modal
       router.refresh()
-      onClose()
+      // Esperar a que router.refresh() complete antes de cerrar el modal
+      setTimeout(onClose, 300)
     } catch (err) {
       setError('Error inesperado. Intenta de nuevo.')
       setLoading(false)
