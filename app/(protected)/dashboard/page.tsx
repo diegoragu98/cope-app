@@ -27,8 +27,8 @@ export default async function DashboardPage() {
   }
 
   // Obtener datos del usuario
-  const userName = user.user_metadata?.full_name || user.email
-  const userEmail = user.email
+  const userName = user.user_metadata?.full_name || user.email || 'Usuario'
+  const userEmail = user.email || ''
 
   // Obtener cuentas y tarjetas
   const accounts = await getUserAccounts()
