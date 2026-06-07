@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { registerCreditCardPayment } from '@/lib/credit-cards/actions'
 import { getUserAccounts } from '@/lib/accounts/actions'
@@ -34,6 +34,7 @@ interface RegisterPaymentModalProps {
 
 export default function RegisterPaymentModal({ card, onClose }: RegisterPaymentModalProps) {
   const router = useRouter()
+  const amountInputRef = useRef<HTMLInputElement>(null)
   const [accounts, setAccounts] = useState<Account[]>([])
   const [formData, setFormData] = useState({
     amount: card.current_balance,
@@ -65,6 +66,16 @@ export default function RegisterPaymentModal({ card, onClose }: RegisterPaymentM
     }
 
     loadAccounts()
+  }, [])
+
+  // Auto-focus y seleccionar input de monto al abrir el modal
+  useEffect(() => {
+    setTimeout(() => {
+      if (amountInputRef.current) {
+        amountInputRef.current.focus()
+        amountInputRef.current.select()
+      }
+    }, 0)
   }, [])
 
   const selectedAccount = accounts.find((a) => a.id === formData.sourceAccountId)
@@ -160,6 +171,7 @@ export default function RegisterPaymentModal({ card, onClose }: RegisterPaymentM
                 $
               </span>
               <input
+                ref={amountInputRef}
                 type="text"
                 inputMode="numeric"
                 value={formData.amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}

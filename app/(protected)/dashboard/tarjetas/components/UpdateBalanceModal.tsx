@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { updateCreditCardBalance } from '@/lib/credit-cards/actions'
 import { Button } from '@/components/ui/Button'
@@ -26,9 +26,20 @@ interface UpdateBalanceModalProps {
 
 export default function UpdateBalanceModal({ card, onClose }: UpdateBalanceModalProps) {
   const router = useRouter()
+  const inputRef = useRef<HTMLInputElement>(null)
   const [newBalance, setNewBalance] = useState(card.current_balance)
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
+
+  // Auto-focus y seleccionar input al abrir el modal
+  useEffect(() => {
+    setTimeout(() => {
+      if (inputRef.current) {
+        inputRef.current.focus()
+        inputRef.current.select()
+      }
+    }, 0)
+  }, [])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -96,6 +107,7 @@ export default function UpdateBalanceModal({ card, onClose }: UpdateBalanceModal
                 $
               </span>
               <input
+                ref={inputRef}
                 type="text"
                 inputMode="numeric"
                 value={newBalance.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
@@ -104,7 +116,6 @@ export default function UpdateBalanceModal({ card, onClose }: UpdateBalanceModal
                   setNewBalance(parseFloat(numericValue) || 0)
                 }}
                 placeholder="0"
-                autoFocus
                 className="flex-1 px-4 py-2 rounded-r-lg border-2 border-gray-300 focus:border-cope-primary focus:outline-none text-sm"
                 disabled={loading}
               />
