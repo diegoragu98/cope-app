@@ -36,7 +36,7 @@ export default async function DashboardPage() {
   const USD_TO_MXN_RATE = 17.5
   const totalPatrimony = accounts.reduce((sum: number, acc: any) => {
     const amount =
-      acc.currency === 'MXN' ? acc.balance : (acc.balance * USD_TO_MXN_RATE)
+      acc.currency === 'MXN' ? acc.balance : acc.balance * USD_TO_MXN_RATE
     return sum + (amount || 0)
   }, 0)
 
@@ -46,7 +46,7 @@ export default async function DashboardPage() {
     .filter((acc: any) => liquidTypes.includes(acc.type))
     .reduce((sum: number, acc: any) => {
       const amount =
-        acc.currency === 'MXN' ? acc.balance : (acc.balance * USD_TO_MXN_RATE)
+        acc.currency === 'MXN' ? acc.balance : acc.balance * USD_TO_MXN_RATE
       return sum + (amount || 0)
     }, 0)
 
@@ -58,7 +58,7 @@ export default async function DashboardPage() {
     const amount =
       card.currency === 'MXN'
         ? card.current_balance
-        : (card.current_balance * USD_TO_MXN_RATE)
+        : card.current_balance * USD_TO_MXN_RATE
     return sum + (amount || 0)
   }, 0)
 
