@@ -2,8 +2,8 @@
 
 import { useState } from 'react'
 import { Button } from '@/components/ui/Button'
-import UpdateBalanceModal from '../tarjetas/components/UpdateBalanceModal'
-import RegisterPaymentModal from '../tarjetas/components/RegisterPaymentModal'
+import UpdateBalanceModal from '@/app/(protected)/dashboard/tarjetas/components/UpdateBalanceModal'
+import RegisterPaymentModal from '@/app/(protected)/dashboard/tarjetas/components/RegisterPaymentModal'
 
 interface CreditCard {
   id: string
