@@ -76,9 +76,9 @@ export default function CreditCardModalForm({ card, onClose, onSuccess }: Credit
         }
       }
 
-      // Éxito - refrescar y cerrar
+      // Éxito - cerrar modal y refrescar
+      onClose()
       router.refresh()
-      setTimeout(onClose, 300)
     } catch (err) {
       setError('Error inesperado. Intenta de nuevo.')
       setLoading(false)

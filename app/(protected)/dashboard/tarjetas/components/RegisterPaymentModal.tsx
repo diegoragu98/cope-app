@@ -103,14 +103,16 @@ export default function RegisterPaymentModal({ card, onClose }: RegisterPaymentM
         return
       }
 
-      // Éxito - mostrar confirmación y cerrar
-      alert(`✅ Pago de $${formData.amount.toLocaleString('es-MX', {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
-      })} registrado. ${card.name} actualizada.`)
-
+      // Éxito - cerrar modal, refrescar y mostrar confirmación
+      onClose()
       router.refresh()
-      setTimeout(onClose, 300)
+
+      setTimeout(() => {
+        alert(`✅ Pago de $${formData.amount.toLocaleString('es-MX', {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        })} registrado. ${card.name} actualizada.`)
+      }, 100)
     } catch (err) {
       setError('Error inesperado. Intenta de nuevo.')
       setLoading(false)
