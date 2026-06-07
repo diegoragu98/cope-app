@@ -1,58 +1,30 @@
 # Cope App Development Notes
 
-## Estado al cierre de Sesión 5 (Junio 2026)
+## Sprint 1 - COMPLETADO ✅ (6 de junio 2026)
 
-### Sprint 1 - Progreso: ~60%
+### Construido:
+- ✅ Módulo Mis Cuentas con tabla compacta y 8 cuentas reales
+- ✅ Módulo Mis Tarjetas con CRUD completo, modales y alertas de urgencia
+- ✅ Server Actions completos para credit_cards
+- ✅ Dashboard rico estilo Excel con patrimonio total y 4 KPIs
+- ✅ Acciones rápidas (placeholder para Sprint 5)
+- ✅ Tablas embebidas de Cuentas y TDC en dashboard con modales
+- ✅ Modales reutilizados entre pantallas dedicadas y dashboard
+- ✅ CurrencyInput con formato $ y comas en todos los inputs de monto
+- ✅ Alertas visuales por urgencia en próximo corte de TDC
+- ✅ router.refresh() pattern en todos los Server Actions
 
-✅ **COMPLETADO:**
-- Migración SQL ejecutada (accounts modificada, credit_cards y credit_card_payments creadas)
-- Server Action createAccount funcional (router.refresh pattern)
-- Sidebar de navegación con highlight de ruta actual
-- Módulo Mis Cuentas con tabla compacta
-- 8 cuentas reales de Diego cargadas
-- Multi-moneda MXN/USD funcionando
-- Etiquetas mejoradas de tipos de cuenta:
-  * Cuenta de Débito (checking)
-  * Cuenta de Ahorros (savings)
-  * Inversión (Rendimiento Fijo)
-  * Inversión (Rendimiento Variable)
-  * App de Pago / Fintech
-  * Efectivo
-  * Otra
-- Totales por moneda al final de la tabla
-- Tabla compacta (8 cuentas + header + totales visibles sin scroll en desktop)
+### Estado del producto:
+- **Patrimonio reflejado**: $1,845,983.41 MXN
+- **8 cuentas activas**: Santander (x2), Scotiabank, BBVA, Inbursa, Binance, Payoneer, Efectivo
+- **2 TDC activas**: AMEX ($4,102.78), Santander Like U ($7,876.59)
 
-⏸️ **PENDIENTE para próxima sesión:**
-- Módulo Mis Tarjetas (TDC) con empty state
-- Server Actions para credit_cards CRUD
-- Modal "Actualizar Saldo" de TDC
-- Modal "Registrar Pago" con lógica de afectar cuenta origen
-- Página historial /dashboard/tarjetas/historial
-- Tabla mensual estilo Excel
-- Gráfico de tendencia con Recharts
-- Actualizar dashboard principal con números reales
-- Refinar formato de input de saldo (no formatea ceros a la izquierda)
-- Arreglar scroll del modal (botones se cortan)
-
-### Datos de Diego para TDC (próxima sesión)
-- AMEX: corte día 13, pago día 27, saldo ~$4,102.78
-- Santander Like U: corte día 12, pago día 1 mes siguiente, saldo ~$7,876.59
-
-### Bugs Resueltos en esta Sesión
-- ✅ Redirect exceptions en Server Actions (auth signin/signup)
-- ✅ Modal no cerraba después de crear cuenta
-- ✅ Router.refresh() timing issue
-- ✅ Falta de navegación en /dashboard/cuentas
-- ✅ Tabla poco escalable (cards grid cambiadas a tabla compacta)
-
-### Tiempo estimado próxima sesión
-1.5-2 horas para módulo Mis Tarjetas
-
-### Notas para próxima sesión
-- Diego confirmó que 8 cuentas + tabla compacta es el layout ideal
-- Tabla agrupada por tipo NO funcionó visualmente (revirtió)
-- Sidebar está listo y no necesita cambios
-- Modal de agregar/editar cuentas sigue siendo el template para TDC
+### Pendientes detectados (para sprints futuros):
+- **Sprint 2**: Movimientos + Pendientes
+- **Sprint 3**: Inversiones con ganancias/pérdidas
+- **Sprint 3**: Historial de TDC con gráfico
+- **Sprint 5**: Flujo Pagar TDC orquestado (retiro CETES → pago Santander)
+- **Sprint 5**: Día de Pago wizard
 
 ---
 
