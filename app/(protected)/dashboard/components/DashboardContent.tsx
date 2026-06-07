@@ -157,41 +157,33 @@ export default function DashboardContent({
         </div>
 
         {/* SECCIÓN 4: ACCIONES RÁPIDAS */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+        <div className="grid grid-cols-4 gap-3 mb-8">
           <button
             onClick={() => alert('💰 Día de Pago - Próximamente')}
-            className="bg-white rounded-lg shadow p-6 hover:shadow-md transition-shadow text-left"
+            className="bg-white rounded-lg shadow px-4 py-3 hover:shadow-md transition-shadow text-center text-sm font-semibold text-gray-900"
           >
-            <div className="text-3xl mb-2">💰</div>
-            <h3 className="font-semibold text-gray-900 mb-1">Día de Pago</h3>
-            <p className="text-sm text-gray-600">Registrar ingresos</p>
+            💰 Día de Pago
           </button>
 
           <button
             onClick={() => alert('💳 Pagar TDC - Próximamente')}
-            className="bg-white rounded-lg shadow p-6 hover:shadow-md transition-shadow text-left"
+            className="bg-white rounded-lg shadow px-4 py-3 hover:shadow-md transition-shadow text-center text-sm font-semibold text-gray-900"
           >
-            <div className="text-3xl mb-2">💳</div>
-            <h3 className="font-semibold text-gray-900 mb-1">Pagar TDC</h3>
-            <p className="text-sm text-gray-600">Registrar pagos</p>
+            💳 Pagar TDC
           </button>
 
           <button
             onClick={() => alert('📊 Actualizar valores - Próximamente')}
-            className="bg-white rounded-lg shadow p-6 hover:shadow-md transition-shadow text-left"
+            className="bg-white rounded-lg shadow px-4 py-3 hover:shadow-md transition-shadow text-center text-sm font-semibold text-gray-900"
           >
-            <div className="text-3xl mb-2">📊</div>
-            <h3 className="font-semibold text-gray-900 mb-1">Actualizar valores</h3>
-            <p className="text-sm text-gray-600">Refrescar saldos</p>
+            📊 Actualizar
           </button>
 
           <button
             onClick={() => alert('➕ Nuevo movimiento - Próximamente')}
-            className="bg-white rounded-lg shadow p-6 hover:shadow-md transition-shadow text-left"
+            className="bg-white rounded-lg shadow px-4 py-3 hover:shadow-md transition-shadow text-center text-sm font-semibold text-gray-900"
           >
-            <div className="text-3xl mb-2">➕</div>
-            <h3 className="font-semibold text-gray-900 mb-1">Nuevo movimiento</h3>
-            <p className="text-sm text-gray-600">Registrar gasto</p>
+            ➕ Nuevo
           </button>
         </div>
 
