@@ -15,6 +15,7 @@ interface Account {
   balance: number
   icon?: string
   created_at: string
+  is_active: boolean
 }
 
 interface CreditCard {
@@ -27,6 +28,7 @@ interface CreditCard {
   payment_day: number
   icon?: string
   created_at: string
+  is_active: boolean
 }
 
 interface DashboardContentProps {
