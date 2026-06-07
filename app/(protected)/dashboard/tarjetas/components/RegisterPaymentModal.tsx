@@ -133,7 +133,7 @@ export default function RegisterPaymentModal({ card, onClose }: RegisterPaymentM
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg shadow-xl max-w-md w-full max-h-96 overflow-y-auto">
+      <div className="bg-white rounded-lg shadow-xl max-w-md w-full">
         {/* Header */}
         <div className="sticky top-0 bg-white border-b border-gray-200 p-6">
           <h2 className="text-2xl font-bold text-cope-text">
@@ -142,7 +142,7 @@ export default function RegisterPaymentModal({ card, onClose }: RegisterPaymentM
         </div>
 
         {/* Form */}
-        <form onSubmit={handleSubmit} className="p-6 space-y-4">
+        <form onSubmit={handleSubmit} className="p-6 space-y-3">
           {/* Error message */}
           {error && (
             <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
@@ -150,118 +150,86 @@ export default function RegisterPaymentModal({ card, onClose }: RegisterPaymentM
             </div>
           )}
 
-          {/* Monto a pagar */}
+          {/* FILA 1: Monto a pagar */}
           <div>
             <label className="block text-sm font-semibold text-gray-700 mb-2">
               Monto a pagar *
             </label>
             <div className="flex items-center">
-              <span className="px-4 py-2 bg-gray-100 rounded-l-lg border-2 border-gray-300 border-r-0">
+              <span className="px-4 py-2 bg-gray-100 rounded-l-lg border-2 border-gray-300 border-r-0 text-sm">
                 $
               </span>
               <input
-                type="number"
-                value={formData.amount}
-                onChange={(e) => handleChange('amount', parseFloat(e.target.value) || 0)}
-                placeholder="0.00"
-                step="0.01"
-                className="flex-1 px-4 py-2 rounded-r-lg border-2 border-gray-300 focus:border-cope-primary focus:outline-none"
+                type="text"
+                inputMode="numeric"
+                value={formData.amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                onChange={(e) => {
+                  const numericValue = e.target.value.replace(/\D/g, '')
+                  handleChange('amount', parseFloat(numericValue) || 0)
+                }}
+                placeholder="0"
+                className="flex-1 px-4 py-2 rounded-r-lg border-2 border-gray-300 focus:border-cope-primary focus:outline-none text-sm"
                 disabled={loading}
               />
             </div>
-            <p className="text-xs text-gray-500 mt-1">
-              Saldo actual: ${card.current_balance.toLocaleString('es-MX', {
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2,
-              })}
-            </p>
           </div>
 
-          {/* Desde qué cuenta */}
+          {/* FILA 2: Desde qué cuenta */}
           <div>
             <label className="block text-sm font-semibold text-gray-700 mb-2">
               Desde qué cuenta *
             </label>
             {accounts.length === 0 ? (
               <div className="px-4 py-3 bg-red-50 rounded-lg border border-red-200 text-red-700 text-sm">
-                No tienes cuentas activas para hacer pagos
+                No tienes cuentas activas
               </div>
             ) : (
               <select
                 value={formData.sourceAccountId}
                 onChange={(e) => handleChange('sourceAccountId', e.target.value)}
-                className="w-full px-4 py-2 rounded-lg border-2 border-gray-300 focus:border-cope-primary focus:outline-none"
+                className="w-full px-4 py-2 rounded-lg border-2 border-gray-300 focus:border-cope-primary focus:outline-none text-sm"
                 disabled={loading}
               >
-                <option value="">Selecciona una cuenta...</option>
+                <option value="">Selecciona cuenta...</option>
                 {accounts.map((account) => (
                   <option key={account.id} value={account.id}>
-                    {account.name} ({account.currency}) - Disponible: ${account.balance.toLocaleString('es-MX', {
-                      minimumFractionDigits: 2,
-                      maximumFractionDigits: 2,
+                    {account.name} - ${account.balance.toLocaleString('es-MX', {
+                      minimumFractionDigits: 0,
+                      maximumFractionDigits: 0,
                     })}
                   </option>
                 ))}
               </select>
             )}
-
-            {selectedAccount && (
-              <div className="mt-2 p-3 bg-blue-50 rounded-lg border border-blue-200 text-sm text-blue-800">
-                ✓ Saldo disponible: ${selectedAccount.balance.toLocaleString('es-MX', {
-                  minimumFractionDigits: 2,
-                  maximumFractionDigits: 2,
-                })} {selectedAccount.currency}
-              </div>
-            )}
           </div>
 
-          {/* Fecha */}
-          <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
-              Fecha *
-            </label>
-            <input
-              type="date"
-              value={formData.paymentDate}
-              onChange={(e) => handleChange('paymentDate', e.target.value)}
-              className="w-full px-4 py-2 rounded-lg border-2 border-gray-300 focus:border-cope-primary focus:outline-none"
-              disabled={loading}
-            />
-          </div>
+          {/* FILA 3: Fecha | Notas */}
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                Fecha *
+              </label>
+              <input
+                type="date"
+                value={formData.paymentDate}
+                onChange={(e) => handleChange('paymentDate', e.target.value)}
+                className="w-full px-4 py-2 rounded-lg border-2 border-gray-300 focus:border-cope-primary focus:outline-none text-sm"
+                disabled={loading}
+              />
+            </div>
 
-          {/* Notas (opcional) */}
-          <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
-              Notas (opcional)
-            </label>
-            <textarea
-              value={formData.notes}
-              onChange={(e) => handleChange('notes', e.target.value)}
-              placeholder="Ej: Pago en línea, referencia..."
-              className="w-full px-4 py-2 rounded-lg border-2 border-gray-300 focus:border-cope-primary focus:outline-none text-sm"
-              rows={3}
-              disabled={loading}
-            />
-          </div>
-
-          {/* Resumen */}
-          <div className="p-4 bg-green-50 rounded-lg border border-green-200">
-            <div className="text-sm font-semibold text-green-900 mb-2">Resumen del pago:</div>
-            <div className="text-sm text-green-800 space-y-1">
-              <div>• Se pagará: ${formData.amount.toLocaleString('es-MX', {
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2,
-              })}</div>
-              {selectedAccount && (
-                <>
-                  <div>• De: {selectedAccount.name}</div>
-                  <div>• Nuevo saldo de {selectedAccount.name}: ${(selectedAccount.balance - formData.amount).toLocaleString('es-MX', {
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2,
-                  })}</div>
-                </>
-              )}
-              <div>• {card.name} se reseteará a $0</div>
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                Notas
+              </label>
+              <input
+                type="text"
+                value={formData.notes}
+                onChange={(e) => handleChange('notes', e.target.value)}
+                placeholder="Opcional"
+                className="w-full px-4 py-2 rounded-lg border-2 border-gray-300 focus:border-cope-primary focus:outline-none text-sm"
+                disabled={loading}
+              />
             </div>
           </div>
 

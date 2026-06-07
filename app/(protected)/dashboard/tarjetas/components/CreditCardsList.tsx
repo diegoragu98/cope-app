@@ -82,14 +82,14 @@ export default function CreditCardsList({ cards, onEdit }: CreditCardsListProps)
 
   return (
     <>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="space-y-4">
         {cards.map((card) => {
           const daysUntilCutoff = getDaysUntilCutoff(card.cutoff_day)
 
           return (
             <div
               key={card.id}
-              className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow"
+              className="bg-white rounded-lg shadow overflow-hidden hover:shadow-md transition-shadow"
             >
               {/* Header con color */}
               <div
@@ -97,111 +97,104 @@ export default function CreditCardsList({ cards, onEdit }: CreditCardsListProps)
                 style={{ backgroundColor: card.color || '#0F766E' }}
               />
 
-              {/* Contenido */}
-              <div className="p-6">
-                {/* Nombre e institución */}
-                <div className="flex items-start justify-between mb-4">
-                  <div>
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className="text-3xl">{card.icon || '💳'}</span>
-                      <h3 className="text-xl font-bold text-cope-text">{card.name}</h3>
+              {/* Contenido - Layout compacto en filas */}
+              <div className="p-4 space-y-3">
+                {/* FILA 1: Nombre e institución + Próximo corte */}
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span className="text-2xl">{card.icon || '💳'}</span>
+                    <div>
+                      <h3 className="font-bold text-gray-900">{card.name}</h3>
+                      {card.institution && (
+                        <p className="text-xs text-gray-500">{card.institution}</p>
+                      )}
                     </div>
-                    {card.institution && (
-                      <p className="text-sm text-gray-500">{card.institution}</p>
-                    )}
+                  </div>
+                  <div
+                    className={`text-right text-sm font-semibold ${
+                      daysUntilCutoff <= 0
+                        ? 'text-red-600'
+                        : daysUntilCutoff <= 3
+                          ? 'text-amber-500'
+                          : 'text-cope-primary'
+                    }`}
+                  >
+                    {daysUntilCutoff <= 0 ? '⚠️ Corte HOY' : `Próx corte: ${daysUntilCutoff}d`}
                   </div>
                 </div>
 
-                {/* Saldo actual grande */}
-                <div className="mb-6 pb-6 border-b border-gray-200">
-                  <p className="text-sm text-gray-600 mb-1">Saldo actual</p>
-                  <div className="flex items-baseline gap-2">
-                    <span className="text-4xl font-bold text-cope-primary">
+                {/* FILA 2: Saldo + Fechas */}
+                <div className="flex items-center justify-between text-sm">
+                  <div>
+                    <span className="text-gray-600">Saldo: </span>
+                    <span className="font-bold text-gray-900">
                       {formatCurrency(card.current_balance, card.currency)}
                     </span>
                   </div>
-                </div>
-
-                {/* Fechas de corte y pago */}
-                <div className="mb-6 pb-6 border-b border-gray-200 space-y-2">
-                  <div className="flex items-center gap-4 text-sm">
-                    <div>
-                      <span className="text-gray-600">Corte: </span>
-                      <span className="font-semibold text-gray-900">día {card.cutoff_day}</span>
-                    </div>
-                    <span className="text-gray-400">|</span>
-                    <div>
-                      <span className="text-gray-600">Pago: </span>
-                      <span className="font-semibold text-gray-900">día {card.payment_day}</span>
-                    </div>
-                  </div>
-                  <div className="text-sm text-cope-primary font-semibold">
-                    Próximo corte: en {daysUntilCutoff} día{daysUntilCutoff !== 1 ? 's' : ''}
+                  <div className="text-gray-600">
+                    <span>Corte: {card.cutoff_day}</span>
+                    <span className="mx-2">|</span>
+                    <span>Pago: {card.payment_day}</span>
                   </div>
                 </div>
 
-                {/* Botones de acción */}
-                <div className="space-y-2">
-                  <div className="flex gap-2">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => setUpdateBalanceCard(card)}
-                      className="flex-1 text-sm"
-                    >
-                      Actualizar saldo
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => setRegisterPaymentCard(card)}
-                      className="flex-1 text-sm"
-                    >
-                      Registrar pago
-                    </Button>
-                  </div>
-
-                  <div className="flex gap-2">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => onEdit(card)}
-                      className="flex-1"
-                    >
-                      Editar
-                    </Button>
-                    {confirmDelete === card.id ? (
-                      <>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => setConfirmDelete(null)}
-                          disabled={deletingId === card.id}
-                          className="flex-1"
-                        >
-                          Cancelar
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => handleDelete(card.id)}
-                          disabled={deletingId === card.id}
-                          className="flex-1 text-red-600 hover:bg-red-50"
-                        >
-                          {deletingId === card.id ? 'Borrando...' : 'Confirmar'}
-                        </Button>
-                      </>
-                    ) : (
+                {/* FILA 3: Botones de acción */}
+                <div className="flex gap-2 pt-2">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setUpdateBalanceCard(card)}
+                    className="flex-1 text-xs py-1"
+                  >
+                    Actualizar saldo
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setRegisterPaymentCard(card)}
+                    className="flex-1 text-xs py-1"
+                  >
+                    Registrar pago
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => onEdit(card)}
+                    className="flex-1 text-xs py-1"
+                  >
+                    Editar
+                  </Button>
+                  {confirmDelete === card.id ? (
+                    <>
                       <Button
                         variant="ghost"
                         size="sm"
-                        onClick={() => setConfirmDelete(card.id)}
-                        className="flex-1 text-red-600 hover:bg-red-50"
+                        onClick={() => setConfirmDelete(null)}
+                        disabled={deletingId === card.id}
+                        className="flex-1 text-xs py-1"
                       >
-                        Eliminar
+                        ✕
                       </Button>
-                    )}
-                  </div>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleDelete(card.id)}
+                        disabled={deletingId === card.id}
+                        className="flex-1 text-xs py-1 text-red-600 hover:bg-red-50"
+                      >
+                        {deletingId === card.id ? '...' : '🗑️'}
+                      </Button>
+                    </>
+                  ) : (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setConfirmDelete(card.id)}
+                      className="flex-1 text-xs py-1 text-red-600 hover:bg-red-50"
+                    >
+                      Eliminar
+                    </Button>
+                  )}
                 </div>
               </div>
             </div>

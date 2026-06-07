@@ -104,7 +104,7 @@ export default function CreditCardModalForm({ card, onClose, onSuccess }: Credit
             </div>
           )}
 
-          {/* Nombre */}
+          {/* FILA 1: Nombre completo */}
           <div>
             <label className="block text-sm font-semibold text-gray-700 mb-2">
               Nombre *
@@ -119,7 +119,7 @@ export default function CreditCardModalForm({ card, onClose, onSuccess }: Credit
             />
           </div>
 
-          {/* Institución */}
+          {/* FILA 2: Institución completa */}
           <div>
             <label className="block text-sm font-semibold text-gray-700 mb-2">
               Institución (opcional)
@@ -134,76 +134,81 @@ export default function CreditCardModalForm({ card, onClose, onSuccess }: Credit
             />
           </div>
 
-          {/* Moneda */}
-          <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
-              Moneda *
-            </label>
-            <select
-              value={formData.currency}
-              onChange={(e) => handleChange('currency', e.target.value)}
-              className="w-full px-4 py-2 rounded-lg border-2 border-gray-300 focus:border-cope-primary focus:outline-none"
-              disabled={loading}
-            >
-              <option value="MXN">MXN (Pesos)</option>
-              <option value="USD">USD (Dólares)</option>
-            </select>
+          {/* FILA 3: Moneda | Saldo actual */}
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                Moneda *
+              </label>
+              <select
+                value={formData.currency}
+                onChange={(e) => handleChange('currency', e.target.value)}
+                className="w-full px-4 py-2 rounded-lg border-2 border-gray-300 focus:border-cope-primary focus:outline-none"
+                disabled={loading}
+              >
+                <option value="MXN">MXN (Pesos)</option>
+                <option value="USD">USD (Dólares)</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                Saldo actual *
+              </label>
+              <div className="flex items-center">
+                <span className="px-4 py-2 bg-gray-100 rounded-l-lg border-2 border-gray-300 border-r-0 text-sm">
+                  $
+                </span>
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  value={formData.currentBalance.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                  onChange={(e) => {
+                    const numericValue = e.target.value.replace(/\D/g, '')
+                    handleChange('currentBalance', parseFloat(numericValue) || 0)
+                  }}
+                  placeholder="0"
+                  className="flex-1 px-4 py-2 rounded-r-lg border-2 border-gray-300 focus:border-cope-primary focus:outline-none text-sm"
+                  disabled={loading}
+                />
+              </div>
+            </div>
           </div>
 
-          {/* Saldo actual */}
-          <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
-              Saldo actual *
-            </label>
-            <div className="flex items-center">
-              <span className="px-4 py-2 bg-gray-100 rounded-l-lg border-2 border-gray-300 border-r-0">
-                $
-              </span>
+          {/* FILA 4: Día de corte | Día de pago */}
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                Día de corte (1-31) *
+              </label>
               <input
                 type="number"
-                value={formData.currentBalance}
-                onChange={(e) => handleChange('currentBalance', parseFloat(e.target.value) || 0)}
-                placeholder="0.00"
-                step="0.01"
-                className="flex-1 px-4 py-2 rounded-r-lg border-2 border-gray-300 focus:border-cope-primary focus:outline-none"
+                value={formData.cutoffDay}
+                onChange={(e) => handleChange('cutoffDay', parseInt(e.target.value) || 1)}
+                min="1"
+                max="31"
+                className="w-full px-4 py-2 rounded-lg border-2 border-gray-300 focus:border-cope-primary focus:outline-none"
+                disabled={loading}
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                Día de pago (1-31) *
+              </label>
+              <input
+                type="number"
+                value={formData.paymentDay}
+                onChange={(e) => handleChange('paymentDay', parseInt(e.target.value) || 1)}
+                min="1"
+                max="31"
+                className="w-full px-4 py-2 rounded-lg border-2 border-gray-300 focus:border-cope-primary focus:outline-none"
                 disabled={loading}
               />
             </div>
           </div>
 
-          {/* Día de corte */}
-          <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
-              Día de corte (1-31) *
-            </label>
-            <input
-              type="number"
-              value={formData.cutoffDay}
-              onChange={(e) => handleChange('cutoffDay', parseInt(e.target.value) || 1)}
-              min="1"
-              max="31"
-              className="w-full px-4 py-2 rounded-lg border-2 border-gray-300 focus:border-cope-primary focus:outline-none"
-              disabled={loading}
-            />
-          </div>
-
-          {/* Día de pago */}
-          <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
-              Día de pago (1-31) *
-            </label>
-            <input
-              type="number"
-              value={formData.paymentDay}
-              onChange={(e) => handleChange('paymentDay', parseInt(e.target.value) || 1)}
-              min="1"
-              max="31"
-              className="w-full px-4 py-2 rounded-lg border-2 border-gray-300 focus:border-cope-primary focus:outline-none"
-              disabled={loading}
-            />
-          </div>
-
-          {/* Color (opcional) */}
+          {/* FILA 5: Color selector */}
           <div>
             <label className="block text-sm font-semibold text-gray-700 mb-2">
               Color (opcional)

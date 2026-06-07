@@ -92,17 +92,20 @@ export default function UpdateBalanceModal({ card, onClose }: UpdateBalanceModal
               Nuevo saldo *
             </label>
             <div className="flex items-center">
-              <span className="px-4 py-2 bg-gray-100 rounded-l-lg border-2 border-gray-300 border-r-0">
+              <span className="px-4 py-2 bg-gray-100 rounded-l-lg border-2 border-gray-300 border-r-0 text-sm">
                 $
               </span>
               <input
-                type="number"
-                value={newBalance}
-                onChange={(e) => setNewBalance(parseFloat(e.target.value) || 0)}
-                placeholder="0.00"
-                step="0.01"
+                type="text"
+                inputMode="numeric"
+                value={newBalance.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                onChange={(e) => {
+                  const numericValue = e.target.value.replace(/\D/g, '')
+                  setNewBalance(parseFloat(numericValue) || 0)
+                }}
+                placeholder="0"
                 autoFocus
-                className="flex-1 px-4 py-2 rounded-r-lg border-2 border-gray-300 focus:border-cope-primary focus:outline-none"
+                className="flex-1 px-4 py-2 rounded-r-lg border-2 border-gray-300 focus:border-cope-primary focus:outline-none text-sm"
                 disabled={loading}
               />
             </div>
