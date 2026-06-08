@@ -34,9 +34,11 @@ interface CreditCard {
 interface DashboardContentProps {
   userName: string
   totalPatrimony: number
+  projectedPatrimony: number
   liquidCash: number
   liquidPercentage: number
   totalTDC: number
+  pendingBalance: number
   accounts: Account[]
   creditCards: CreditCard[]
 }
@@ -71,9 +73,11 @@ function getDaysUntilCutoff(cutoffDay: number): number {
 export default function DashboardContent({
   userName,
   totalPatrimony,
+  projectedPatrimony,
   liquidCash,
   liquidPercentage,
   totalTDC,
+  pendingBalance,
   accounts,
   creditCards,
 }: DashboardContentProps) {
@@ -120,13 +124,47 @@ export default function DashboardContent({
 
       {/* CONTENIDO PRINCIPAL */}
       <div className="max-w-7xl mx-auto px-6 py-8">
-        {/* SECCIÓN 2: PATRIMONIO TOTAL */}
-        <div className="bg-white rounded-lg shadow overflow-hidden border-l-4 border-cope-primary mb-4 p-4">
-          <div className="text-xs text-gray-600 mb-1">Patrimonio Total</div>
-          <div className="text-4xl font-bold text-cope-primary mb-1">
-            {formatCurrency(totalPatrimony)}
+        {/* SECCIÓN 2: PATRIMONIO TOTAL + PROYECTADO */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+          {/* Patrimonio Total (Real) */}
+          <div className="bg-white rounded-lg shadow overflow-hidden border-l-4 border-cope-primary p-4">
+            <div className="text-xs text-gray-600 mb-1">Patrimonio Total</div>
+            <div className="text-4xl font-bold text-cope-primary mb-1">
+              {formatCurrency(totalPatrimony)}
+            </div>
+            <div className="text-xs text-gray-600">Real - Hoy</div>
           </div>
-          <div className="text-xs text-gray-600">MXN</div>
+
+          {/* Patrimonio Proyectado (Real + Pendientes) */}
+          <div
+            className={`bg-white rounded-lg shadow overflow-hidden border-l-4 p-4 ${
+              projectedPatrimony >= totalPatrimony
+                ? 'border-green-500'
+                : 'border-orange-500'
+            }`}
+          >
+            <div className="text-xs text-gray-600 mb-1">Patrimonio Proyectado</div>
+            <div
+              className={`text-4xl font-bold mb-1 ${
+                projectedPatrimony >= totalPatrimony
+                  ? 'text-green-600'
+                  : 'text-orange-600'
+              }`}
+            >
+              {formatCurrency(projectedPatrimony)}
+            </div>
+            <div className="text-xs text-gray-600">
+              Real + Pendientes{' '}
+              <span
+                className={
+                  pendingBalance >= 0 ? 'text-green-600' : 'text-red-600'
+                }
+              >
+                ({pendingBalance >= 0 ? '+' : '-'}
+                {formatCurrency(Math.abs(pendingBalance))})
+              </span>
+            </div>
+          </div>
         </div>
 
         {/* SECCIÓN 3: KPIs SECUNDARIOS */}
@@ -162,9 +200,20 @@ export default function DashboardContent({
 
           {/* KPI 4: Pendientes */}
           <div className="bg-white rounded-lg shadow p-4">
-            <div className="text-xs text-gray-600 mb-1">Pendientes</div>
-            <div className="text-xl font-bold text-gray-900">$0</div>
-            <div className="text-xs text-gray-500 mt-1">Próximamente</div>
+            <div className="text-xs text-gray-600 mb-1">Balance Pendientes</div>
+            <div
+              className={`text-xl font-bold ${
+                pendingBalance >= 0 ? 'text-green-600' : 'text-red-600'
+              }`}
+            >
+              {pendingBalance >= 0 ? '+' : '-'}
+              {formatCurrency(Math.abs(pendingBalance))}
+            </div>
+            <div className="text-xs text-gray-500 mt-1">
+              <Link href="/dashboard/pendientes" className="hover:underline">
+                Ver pendientes →
+              </Link>
+            </div>
           </div>
         </div>
 
