@@ -527,7 +527,7 @@ function UpdateBalanceModalAccount({
 }: UpdateBalanceModalAccountProps) {
   const router = useRouter()
   const inputRef = useRef<HTMLInputElement>(null)
-  const [newBalance, setNewBalance] = useState(account.balance)
+  const [newBalance, setNewBalance] = useState(account.balance.toString())
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
 
@@ -546,9 +546,16 @@ function UpdateBalanceModalAccount({
     setError(null)
 
     try {
+      const numBalance = parseFloat(newBalance) || 0
+      if (numBalance <= 0) {
+        setError('El saldo debe ser mayor a 0')
+        setLoading(false)
+        return
+      }
+
       const result = await updateAccount({
         id: account.id,
-        balance: newBalance,
+        balance: numBalance,
       })
 
       if (result.error) {
@@ -611,11 +618,14 @@ function UpdateBalanceModalAccount({
               <input
                 ref={inputRef}
                 type="text"
-                inputMode="numeric"
-                value={newBalance.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                inputMode="decimal"
+                value={newBalance}
                 onChange={(e) => {
-                  const numericValue = e.target.value.replace(/\D/g, '')
-                  setNewBalance(parseFloat(numericValue) || 0)
+                  const val = e.target.value
+                  // Allow only digits and one decimal point - store as string
+                  if (val === '' || /^\d*\.?\d*$/.test(val)) {
+                    setNewBalance(val)
+                  }
                 }}
                 placeholder="0"
                 className="flex-1 px-4 py-2 rounded-r-lg border-2 border-gray-300 focus:border-cope-primary focus:outline-none text-sm"
