@@ -110,10 +110,16 @@ export default function UpdateBalanceModal({ card, onClose }: UpdateBalanceModal
                 ref={inputRef}
                 type="text"
                 inputMode="decimal"
-                value={newBalance.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                value={
+                  (() => {
+                    const str = newBalance.toString()
+                    const parts = str.split('.')
+                    const integerPart = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+                    return parts[1] ? `${integerPart}.${parts[1]}` : integerPart
+                  })()
+                }
                 onChange={(e) => {
                   const numericValue = e.target.value.replace(/[^\d.]/g, '')
-                  // Ensure only one decimal point
                   const parts = numericValue.split('.')
                   const cleanValue = parts.length > 2 ? parts[0] + '.' + parts.slice(1).join('') : numericValue
                   setNewBalance(parseFloat(cleanValue) || 0)
