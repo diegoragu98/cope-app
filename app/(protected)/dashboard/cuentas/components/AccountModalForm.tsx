@@ -41,7 +41,7 @@ export default function AccountModalForm({ account, onClose, onSuccess }: Accoun
     institution: account?.institution || '',
     type: account?.type as AccountType || 'checking',
     currency: (account?.currency || 'MXN') as 'MXN' | 'USD',
-    balance: account?.balance || 0,
+    balance: (account?.balance || 0).toString(),
     color: account?.color || '#0F766E',
     icon: account?.icon || '🏦',
   })
