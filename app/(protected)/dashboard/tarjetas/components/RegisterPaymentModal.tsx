@@ -126,7 +126,7 @@ export default function RegisterPaymentModal({ card, onClose }: RegisterPaymentM
       router.refresh()
 
       setTimeout(() => {
-        alert(`✅ Pago de $${formData.amount.toLocaleString('es-MX', {
+        alert(`✅ Pago de $${numAmount.toLocaleString('es-MX', {
           minimumFractionDigits: 2,
           maximumFractionDigits: 2,
         })} registrado. ${card.name} actualizada.`)
