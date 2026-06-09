@@ -108,11 +108,15 @@ export default function UpdateBalanceModal({ card, onClose }: UpdateBalanceModal
               </span>
               <input
                 ref={inputRef}
-                type="number"
-                step="0.01"
-                min="0"
+                type="text"
                 value={newBalance}
-                onChange={(e) => setNewBalance(parseFloat(e.target.value) || 0)}
+                onChange={(e) => {
+                  const val = e.target.value
+                  // Allow only digits and one decimal point
+                  if (val === '' || /^\d*\.?\d*$/.test(val)) {
+                    setNewBalance(parseFloat(val) || 0)
+                  }
+                }}
                 placeholder="0.00"
                 className="flex-1 px-4 py-2 rounded-r-lg border-2 border-gray-300 focus:border-cope-primary focus:outline-none text-sm"
                 disabled={loading}

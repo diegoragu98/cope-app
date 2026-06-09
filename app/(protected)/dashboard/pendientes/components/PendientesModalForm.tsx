@@ -140,18 +140,22 @@ export default function PendientesModalForm({
           {/* Amount */}
           <div>
             <label className="block text-sm font-semibold text-gray-700 mb-2">
-              Monto *
+              Monto * (ej: 1500.50)
             </label>
             <div className="flex items-center">
               <span className="px-4 py-2 bg-gray-100 rounded-l-lg border-2 border-gray-300 border-r-0 text-sm">
                 $
               </span>
               <input
-                type="number"
-                step="0.01"
-                min="0"
+                type="text"
                 value={amount}
-                onChange={(e) => setAmount(e.target.value)}
+                onChange={(e) => {
+                  const val = e.target.value
+                  // Allow only digits and one decimal point
+                  if (val === '' || /^\d*\.?\d*$/.test(val)) {
+                    setAmount(val)
+                  }
+                }}
                 placeholder="0.00"
                 className="flex-1 px-4 py-2 rounded-r-lg border-2 border-gray-300 focus:border-cope-primary focus:outline-none text-sm"
                 disabled={loading}
