@@ -15,7 +15,7 @@ export default function PendientesModalForm({
   const router = useRouter()
   const [type, setType] = useState<'incoming' | 'outgoing'>('incoming')
   const [concept, setConcept] = useState('')
-  const [amount, setAmount] = useState('')
+  const [amount, setAmount] = useState<number | string>('')
   const [currency, setCurrency] = useState<'MXN' | 'USD'>('MXN')
   const [expectedDate, setExpectedDate] = useState('')
   const [error, setError] = useState<string | null>(null)
@@ -43,8 +43,8 @@ export default function PendientesModalForm({
       return
     }
 
-    const numAmount = parseFloat(amount.replace(/,/g, ''))
-    if (!amount || numAmount <= 0) {
+    const numAmount = parseFloat(String(amount))
+    if (!amount || isNaN(numAmount) || numAmount <= 0) {
       setError('El monto debe ser mayor a 0')
       setLoading(false)
       return
