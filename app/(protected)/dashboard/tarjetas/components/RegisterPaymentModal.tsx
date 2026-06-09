@@ -172,23 +172,12 @@ export default function RegisterPaymentModal({ card, onClose }: RegisterPaymentM
               </span>
               <input
                 ref={amountInputRef}
-                type="text"
-                inputMode="decimal"
-                value={
-                  (() => {
-                    const str = formData.amount.toString()
-                    const parts = str.split('.')
-                    const integerPart = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',')
-                    return parts[1] ? `${integerPart}.${parts[1]}` : integerPart
-                  })()
-                }
-                onChange={(e) => {
-                  const numericValue = e.target.value.replace(/[^\d.]/g, '')
-                  const parts = numericValue.split('.')
-                  const cleanValue = parts.length > 2 ? parts[0] + '.' + parts.slice(1).join('') : numericValue
-                  handleChange('amount', parseFloat(cleanValue) || 0)
-                }}
-                placeholder="0"
+                type="number"
+                step="0.01"
+                min="0"
+                value={formData.amount}
+                onChange={(e) => handleChange('amount', parseFloat(e.target.value) || 0)}
+                placeholder="0.00"
                 className="flex-1 px-4 py-2 rounded-r-lg border-2 border-gray-300 focus:border-cope-primary focus:outline-none text-sm"
                 disabled={loading}
               />

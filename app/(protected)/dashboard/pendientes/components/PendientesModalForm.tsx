@@ -147,24 +147,12 @@ export default function PendientesModalForm({
                 $
               </span>
               <input
-                type="text"
-                inputMode="decimal"
-                value={
-                  amount
-                    ? (() => {
-                        const parts = amount.split('.')
-                        const integerPart = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',')
-                        return parts[1] ? `${integerPart}.${parts[1]}` : integerPart
-                      })()
-                    : ''
-                }
-                onChange={(e) => {
-                  const numericValue = e.target.value.replace(/[^\d.]/g, '')
-                  const parts = numericValue.split('.')
-                  const cleanValue = parts.length > 2 ? parts[0] + '.' + parts.slice(1).join('') : numericValue
-                  setAmount(cleanValue)
-                }}
-                placeholder="0"
+                type="number"
+                step="0.01"
+                min="0"
+                value={amount}
+                onChange={(e) => setAmount(e.target.value)}
+                placeholder="0.00"
                 className="flex-1 px-4 py-2 rounded-r-lg border-2 border-gray-300 focus:border-cope-primary focus:outline-none text-sm"
                 disabled={loading}
               />
