@@ -13,21 +13,33 @@ interface CurrencyInputProps {
 export function CurrencyInput({
   value,
   onChange,
-  placeholder = 'Ej. $5,000',
-  hint = 'Es aproximado, no necesita ser exacto',
+  placeholder = 'Ej. $5,000.00',
+  hint = 'Permite decimales (ej: 1500.50)',
   autoFocus = false,
 }: CurrencyInputProps) {
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    // Solo números
-    const numericValue = e.target.value.replace(/\D/g, '');
+    // Permitir números y UN punto decimal
+    let numericValue = e.target.value.replace(/[^\d.]/g, '');
+
+    // Asegurar solo un punto decimal
+    const parts = numericValue.split('.');
+    if (parts.length > 2) {
+      numericValue = parts[0] + '.' + parts.slice(1).join('');
+    }
+
     onChange(numericValue);
   };
 
   const formatCurrency = (num: string | number): string => {
     const numStr = String(num);
     if (!numStr) return '';
-    // Agregar comas cada 3 dígitos
-    return numStr.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+
+    // Separar parte entera y decimal
+    const parts = numStr.split('.');
+    const integerPart = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+
+    // Reunir con decimal si existe
+    return parts[1] ? `${integerPart}.${parts[1]}` : integerPart;
   };
 
   return (
@@ -38,7 +50,7 @@ export function CurrencyInput({
         </span>
         <input
           type="text"
-          inputMode="numeric"
+          inputMode="decimal"
           placeholder={placeholder}
           value={formatCurrency(value)}
           onChange={handleChange}
