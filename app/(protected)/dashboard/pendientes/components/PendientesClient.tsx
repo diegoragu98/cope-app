@@ -233,7 +233,7 @@ function PendingItemRow({ item }: { item: PendingItem }) {
 
         <Button
           onClick={handleResolve}
-          variant="outline"
+          variant="ghost"
           size="sm"
           className="text-xs whitespace-nowrap"
         >
