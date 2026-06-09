@@ -31,7 +31,7 @@ export default function CreditCardModalForm({ card, onClose, onSuccess }: Credit
     name: card?.name || '',
     institution: card?.institution || '',
     currency: (card?.currency || 'MXN') as 'MXN' | 'USD',
-    currentBalance: card?.current_balance || 0,
+    currentBalance: (card?.current_balance || 0).toString(),
     cutoffDay: card?.cutoff_day || 1,
     paymentDay: card?.payment_day || 1,
     color: card?.color || '#0F766E',
@@ -55,11 +55,23 @@ export default function CreditCardModalForm({ card, onClose, onSuccess }: Credit
     setError(null)
 
     try {
+      const numCurrentBalance = parseFloat(formData.currentBalance as string) || 0
+      if (numCurrentBalance <= 0) {
+        setError('El saldo debe ser mayor a 0')
+        setLoading(false)
+        return
+      }
+
+      const dataToSubmit = {
+        ...formData,
+        currentBalance: numCurrentBalance,
+      }
+
       if (card) {
         // Editar tarjeta existente
         const result = await updateCreditCard({
           id: card.id,
-          ...formData,
+          ...dataToSubmit,
         })
         if (result.error) {
           setError(result.error)
@@ -68,7 +80,7 @@ export default function CreditCardModalForm({ card, onClose, onSuccess }: Credit
         }
       } else {
         // Crear nueva tarjeta
-        const result = await createCreditCard(formData)
+        const result = await createCreditCard(dataToSubmit)
         if (result.error) {
           setError(result.error)
           setLoading(false)
@@ -164,9 +176,9 @@ export default function CreditCardModalForm({ card, onClose, onSuccess }: Credit
                   value={formData.currentBalance}
                   onChange={(e) => {
                     const val = e.target.value
-                    // Allow only digits and one decimal point
+                    // Allow only digits and one decimal point - store as string
                     if (val === '' || /^\d*\.?\d*$/.test(val)) {
-                      handleChange('currentBalance', parseFloat(val) || 0)
+                      handleChange('currentBalance', val)
                     }
                   }}
                   placeholder="0.00"

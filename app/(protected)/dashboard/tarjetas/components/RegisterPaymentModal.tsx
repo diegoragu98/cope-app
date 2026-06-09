@@ -37,7 +37,7 @@ export default function RegisterPaymentModal({ card, onClose }: RegisterPaymentM
   const amountInputRef = useRef<HTMLInputElement>(null)
   const [accounts, setAccounts] = useState<Account[]>([])
   const [formData, setFormData] = useState({
-    amount: card.current_balance,
+    amount: card.current_balance.toString(),
     sourceAccountId: '',
     paymentDate: new Date().toISOString().split('T')[0],
     notes: '',
@@ -100,9 +100,16 @@ export default function RegisterPaymentModal({ card, onClose }: RegisterPaymentM
     }
 
     try {
+      const numAmount = parseFloat(formData.amount as string) || 0
+      if (numAmount <= 0) {
+        setError('El monto debe ser mayor a 0')
+        setLoading(false)
+        return
+      }
+
       const result = await registerCreditCardPayment({
         creditCardId: card.id,
-        amount: formData.amount,
+        amount: numAmount,
         sourceAccountId: formData.sourceAccountId,
         paymentDate: formData.paymentDate,
         notes: formData.notes || undefined,
@@ -176,9 +183,9 @@ export default function RegisterPaymentModal({ card, onClose }: RegisterPaymentM
                 value={formData.amount}
                 onChange={(e) => {
                   const val = e.target.value
-                  // Allow only digits and one decimal point
+                  // Allow only digits and one decimal point - store as string
                   if (val === '' || /^\d*\.?\d*$/.test(val)) {
-                    handleChange('amount', parseFloat(val) || 0)
+                    handleChange('amount', val)
                   }
                 }}
                 placeholder="0.00"

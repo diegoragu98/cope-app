@@ -63,11 +63,23 @@ export default function AccountModalForm({ account, onClose, onSuccess }: Accoun
     setError(null)
 
     try {
+      const numBalance = parseFloat(formData.balance as string) || 0
+      if (numBalance <= 0) {
+        setError('El saldo debe ser mayor a 0')
+        setLoading(false)
+        return
+      }
+
+      const dataToSubmit = {
+        ...formData,
+        balance: numBalance,
+      }
+
       if (account) {
         // Editar cuenta existente
         const result = await updateAccount({
           id: account.id,
-          ...formData,
+          ...dataToSubmit,
         })
         if (result.error) {
           setError(result.error)
@@ -76,7 +88,7 @@ export default function AccountModalForm({ account, onClose, onSuccess }: Accoun
         }
       } else {
         // Crear nueva cuenta
-        const result = await createAccount(formData as CreateAccountInput)
+        const result = await createAccount(dataToSubmit as CreateAccountInput)
         if (result.error) {
           setError(result.error)
           setLoading(false)
@@ -202,11 +214,16 @@ export default function AccountModalForm({ account, onClose, onSuccess }: Accoun
                 $
               </span>
               <input
-                type="number"
+                type="text"
                 value={formData.balance}
-                onChange={(e) => handleChange('balance', parseFloat(e.target.value) || 0)}
+                onChange={(e) => {
+                  const val = e.target.value
+                  // Allow only digits and one decimal point - store as string
+                  if (val === '' || /^\d*\.?\d*$/.test(val)) {
+                    handleChange('balance', val)
+                  }
+                }}
                 placeholder="0.00"
-                step="0.01"
                 className="flex-1 px-4 py-2 rounded-r-lg border-2 border-gray-300 focus:border-cope-primary focus:outline-none"
                 disabled={loading}
               />

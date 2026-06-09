@@ -27,7 +27,7 @@ interface UpdateBalanceModalProps {
 export default function UpdateBalanceModal({ card, onClose }: UpdateBalanceModalProps) {
   const router = useRouter()
   const inputRef = useRef<HTMLInputElement>(null)
-  const [newBalance, setNewBalance] = useState(card.current_balance)
+  const [newBalance, setNewBalance] = useState(card.current_balance.toString())
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
 
@@ -47,7 +47,14 @@ export default function UpdateBalanceModal({ card, onClose }: UpdateBalanceModal
     setError(null)
 
     try {
-      const result = await updateCreditCardBalance(card.id, newBalance)
+      const numBalance = parseFloat(newBalance) || 0
+      if (numBalance <= 0) {
+        setError('El saldo debe ser mayor a 0')
+        setLoading(false)
+        return
+      }
+
+      const result = await updateCreditCardBalance(card.id, numBalance)
 
       if (result.error) {
         setError(result.error)
@@ -112,9 +119,9 @@ export default function UpdateBalanceModal({ card, onClose }: UpdateBalanceModal
                 value={newBalance}
                 onChange={(e) => {
                   const val = e.target.value
-                  // Allow only digits and one decimal point
+                  // Allow only digits and one decimal point - store as string
                   if (val === '' || /^\d*\.?\d*$/.test(val)) {
-                    setNewBalance(parseFloat(val) || 0)
+                    setNewBalance(val)
                   }
                 }}
                 placeholder="0.00"
