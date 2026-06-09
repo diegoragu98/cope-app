@@ -161,11 +161,14 @@ export default function CreditCardModalForm({ card, onClose, onSuccess }: Credit
                 </span>
                 <input
                   type="text"
-                  inputMode="numeric"
+                  inputMode="decimal"
                   value={formData.currentBalance.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
                   onChange={(e) => {
-                    const numericValue = e.target.value.replace(/\D/g, '')
-                    handleChange('currentBalance', parseFloat(numericValue) || 0)
+                    const numericValue = e.target.value.replace(/[^\d.]/g, '')
+                    // Ensure only one decimal point
+                    const parts = numericValue.split('.')
+                    const cleanValue = parts.length > 2 ? parts[0] + '.' + parts.slice(1).join('') : numericValue
+                    handleChange('currentBalance', parseFloat(cleanValue) || 0)
                   }}
                   placeholder="0"
                   className="flex-1 px-4 py-2 rounded-r-lg border-2 border-gray-300 focus:border-cope-primary focus:outline-none text-sm"
