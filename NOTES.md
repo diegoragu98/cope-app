@@ -28,6 +28,45 @@
 
 ---
 
+## Sesión 8 - Sprint 2 Fase 1 (8 de junio 2026)
+
+### Construido:
+- ✅ **Módulo Pendientes completo**
+  * Migración SQL 003_pending_items.sql (soft delete pattern)
+  * Server Actions: create, get, resolve, delete
+  * Pantalla `/dashboard/pendientes` con empty state
+  * Modal "Nuevo Pendiente" (tipo incoming/outgoing)
+  * Integración con dashboard (KPI Pendientes activo)
+  * Patrimonio Proyectado = Patrimonio Total + balance neto pendientes
+
+- ✅ **Bug crítico arreglado: CurrencyInput decimal support**
+  * Causa raíz: parseFloat(e.target.value) en onChange eliminaba punto decimal
+  * Síntoma: usuario escribía "1500." pero se guardaba "1500"
+  * Solución: guardar como string en onChange, parseFloat solo en handleSubmit
+  * Afectó 4 archivos:
+    - RegisterPaymentModal (tarjetas - pagar)
+    - UpdateBalanceModal (tarjetas - actualizar saldo)
+    - CreditCardModalForm (crear/editar tarjeta)
+    - UpdateBalanceModalAccount (embedded en dashboard)
+    - AccountModalForm (crear/editar cuenta)
+  * Validación: 4 tests pasaron (Cuentas, Tarjetas, Pendientes, Dashboard)
+
+### Datos reales actualizados:
+- **AMEX**: $4,102.78 (antes $14,000 de prueba)
+- **Santander Like U**: $7,876.59 (antes $15,000 de prueba)
+
+### Diagnóstico realizado:
+- Identificado que CurrencyInput compartido NO se usaba en ningún lugar
+- Cada modal tenía su propio input con el mismo bug
+- Bug detectado durante dogfooding: escribir "1500.50" mostraba "1500"
+- Problema no estaba en el componente compartido sino en los modales individuales
+
+### Pendientes para próxima sesión:
+- Sprint 2 Fase 2: Movimientos (crear, registrar, editar)
+- Sprint 3: Inversiones + Quiz Estrategia Inversora
+
+---
+
 ## Sprint 1 Architecture Overview
 
 ### ✅ Database Schema
