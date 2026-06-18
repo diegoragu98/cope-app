@@ -65,8 +65,12 @@ export default function PendientesModalForm({
         return
       }
 
-      // Success - close modal
+      // Success - close modal and refresh
       onClose()
+      // Pequeño delay para asegurar que revalidatePath() se complete en el servidor
+      setTimeout(() => {
+        router.refresh()
+      }, 100)
     } catch (err) {
       setError('Error inesperado. Intenta de nuevo.')
       setLoading(false)

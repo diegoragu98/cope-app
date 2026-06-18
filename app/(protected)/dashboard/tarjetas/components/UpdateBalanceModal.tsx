@@ -62,8 +62,12 @@ export default function UpdateBalanceModal({ card, onClose }: UpdateBalanceModal
         return
       }
 
-      // Éxito - cerrar modal
+      // Éxito - cerrar modal y refrescar
       onClose()
+      // Pequeño delay para asegurar que revalidatePath() se complete en el servidor
+      setTimeout(() => {
+        router.refresh()
+      }, 100)
     } catch (err) {
       setError('Error inesperado. Intenta de nuevo.')
       setLoading(false)

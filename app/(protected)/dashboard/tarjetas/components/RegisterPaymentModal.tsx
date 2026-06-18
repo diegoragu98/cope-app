@@ -121,14 +121,16 @@ export default function RegisterPaymentModal({ card, onClose }: RegisterPaymentM
         return
       }
 
-      // Éxito - cerrar modal y mostrar confirmación
+      // Éxito - cerrar modal y refrescar
       onClose()
 
+      // Pequeño delay para asegurar que revalidatePath() se complete en el servidor
       setTimeout(() => {
         alert(`✅ Pago de $${numAmount.toLocaleString('es-MX', {
           minimumFractionDigits: 2,
           maximumFractionDigits: 2,
         })} registrado. ${card.name} actualizada.`)
+        router.refresh()
       }, 100)
     } catch (err) {
       setError('Error inesperado. Intenta de nuevo.')
