@@ -43,9 +43,7 @@ export default function CuentasClient({ initialAccounts }: CuentasClientProps) {
   const handleAccountCreated = useCallback(() => {
     setShowModal(false)
     setEditingAccount(null)
-    // Recargar la página para obtener los datos actualizados
-    router.refresh()
-  }, [router])
+  }, [])
 
   const handleEditAccount = (account: Account) => {
     setEditingAccount(account)

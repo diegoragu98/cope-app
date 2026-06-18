@@ -564,9 +564,8 @@ function UpdateBalanceModalAccount({
         return
       }
 
-      // Éxito - cerrar modal y refrescar
+      // Éxito - cerrar modal
       onClose()
-      router.refresh()
     } catch (err) {
       setError('Error inesperado. Intenta de nuevo.')
       setLoading(false)

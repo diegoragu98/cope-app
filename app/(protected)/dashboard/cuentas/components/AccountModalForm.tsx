@@ -96,9 +96,8 @@ export default function AccountModalForm({ account, onClose, onSuccess }: Accoun
         }
       }
 
-      // Éxito - cerrar modal y refrescar la página
+      // Éxito - cerrar modal
       onClose()
-      router.refresh()
     } catch (err) {
       setError('Error inesperado. Intenta de nuevo.')
       setLoading(false)

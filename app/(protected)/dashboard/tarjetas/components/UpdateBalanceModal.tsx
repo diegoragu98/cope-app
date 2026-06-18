@@ -62,9 +62,8 @@ export default function UpdateBalanceModal({ card, onClose }: UpdateBalanceModal
         return
       }
 
-      // Éxito - cerrar modal y refrescar
+      // Éxito - cerrar modal
       onClose()
-      router.refresh()
     } catch (err) {
       setError('Error inesperado. Intenta de nuevo.')
       setLoading(false)

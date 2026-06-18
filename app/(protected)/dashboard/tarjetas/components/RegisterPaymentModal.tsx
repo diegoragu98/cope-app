@@ -121,9 +121,8 @@ export default function RegisterPaymentModal({ card, onClose }: RegisterPaymentM
         return
       }
 
-      // Éxito - cerrar modal, refrescar y mostrar confirmación
+      // Éxito - cerrar modal y mostrar confirmación
       onClose()
-      router.refresh()
 
       setTimeout(() => {
         alert(`✅ Pago de $${numAmount.toLocaleString('es-MX', {

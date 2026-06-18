@@ -65,9 +65,8 @@ export default function PendientesModalForm({
         return
       }
 
-      // Success - close modal and refresh
+      // Success - close modal
       onClose()
-      router.refresh()
     } catch (err) {
       setError('Error inesperado. Intenta de nuevo.')
       setLoading(false)

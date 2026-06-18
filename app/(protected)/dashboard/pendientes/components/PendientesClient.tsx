@@ -196,8 +196,8 @@ function PendingItemRow({ item }: { item: PendingItem }) {
 
   const handleResolve = async () => {
     const result = await resolvePendingItem(item.id)
-    if (result.success) {
-      router.refresh()
+    if (!result.success) {
+      // Error handling if needed
     }
   }
 
