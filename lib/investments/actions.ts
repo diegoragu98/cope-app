@@ -1,6 +1,6 @@
 'use server'
 
-import { createClient } from '@/supabase/server'
+import { createServerClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
 
 interface CreateInvestmentMovementInput {
@@ -32,7 +32,7 @@ interface InvestmentMovement {
 }
 
 export async function createInvestmentMovement(input: CreateInvestmentMovementInput) {
-  const supabase = await createClient()
+  const supabase = await createServerClient()
 
   try {
     // Validar que la cuenta sea de tipo inversión
@@ -75,7 +75,7 @@ export async function createInvestmentMovement(input: CreateInvestmentMovementIn
 }
 
 export async function getInvestmentAccounts(): Promise<InvestmentAccount[]> {
-  const supabase = await createClient()
+  const supabase = await createServerClient()
 
   try {
     const { data: accounts, error } = await supabase
@@ -129,7 +129,7 @@ export async function getInvestmentAccounts(): Promise<InvestmentAccount[]> {
 }
 
 export async function getInvestmentMovements(accountId: string): Promise<InvestmentMovement[]> {
-  const supabase = await createClient()
+  const supabase = await createServerClient()
 
   try {
     const { data: movements, error } = await supabase
@@ -149,7 +149,7 @@ export async function getInvestmentMovements(accountId: string): Promise<Investm
 }
 
 export async function deleteInvestmentMovement(id: string) {
-  const supabase = await createClient()
+  const supabase = await createServerClient()
 
   try {
     const { error } = await supabase
