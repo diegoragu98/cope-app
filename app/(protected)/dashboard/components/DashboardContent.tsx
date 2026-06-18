@@ -566,10 +566,7 @@ function UpdateBalanceModalAccount({
 
       // Éxito - cerrar modal y refrescar
       onClose()
-      // Pequeño delay para asegurar que revalidatePath() se complete en el servidor
-      setTimeout(() => {
-        router.refresh()
-      }, 100)
+      router.refresh()
     } catch (err) {
       setError('Error inesperado. Intenta de nuevo.')
       setLoading(false)
