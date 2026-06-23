@@ -24,7 +24,6 @@ interface TarjetasClientProps {
 }
 
 export default function TarjetasClient({ initialCards }: TarjetasClientProps) {
-  const [cards, setCards] = useState<CreditCard[]>(initialCards)
   const [showModal, setShowModal] = useState(false)
   const [editingCard, setEditingCard] = useState<CreditCard | null>(null)
 
@@ -48,7 +47,7 @@ export default function TarjetasClient({ initialCards }: TarjetasClientProps) {
   }
 
   // Empty state
-  if (cards.length === 0 && !showModal) {
+  if (initialCards.length === 0 && !showModal) {
     return (
       <div className="min-h-screen flex items-center justify-center px-4 py-8">
         <div className="text-center max-w-md">
@@ -94,7 +93,7 @@ export default function TarjetasClient({ initialCards }: TarjetasClientProps) {
       <div className="bg-white rounded-lg shadow p-6 mb-6 border-l-4 border-cope-primary">
         <div className="text-sm text-gray-600 mb-2">Total a pagar este mes</div>
         <div className="text-4xl font-bold text-cope-primary">
-          ${cards
+          ${initialCards
             .reduce((sum, card) => {
               const amount = card.current_balance || 0
               return sum + (card.currency === 'MXN' ? amount : amount * 17) // Convertir USD a MXN
@@ -105,7 +104,7 @@ export default function TarjetasClient({ initialCards }: TarjetasClientProps) {
             })}
         </div>
         <div className="text-sm text-gray-500 mt-2">
-          {cards.length} tarjeta{cards.length !== 1 ? 's' : ''} registrada{cards.length !== 1 ? 's' : ''}
+          {initialCards.length} tarjeta{initialCards.length !== 1 ? 's' : ''} registrada{initialCards.length !== 1 ? 's' : ''}
         </div>
       </div>
 
@@ -115,7 +114,7 @@ export default function TarjetasClient({ initialCards }: TarjetasClientProps) {
       </Button>
 
       {/* Lista de tarjetas */}
-      <CreditCardsList cards={cards} onEdit={handleOpenModal} />
+      <CreditCardsList cards={initialCards} onEdit={handleOpenModal} />
 
       {/* Modal */}
       {showModal && (
