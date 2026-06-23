@@ -36,7 +36,6 @@ interface CuentasClientProps {
 
 export default function CuentasClient({ initialAccounts }: CuentasClientProps) {
   const router = useRouter()
-  const [accounts, setAccounts] = useState<Account[]>(initialAccounts)
   const [showModal, setShowModal] = useState(false)
   const [editingAccount, setEditingAccount] = useState<Account | null>(null)
 
@@ -73,7 +72,7 @@ export default function CuentasClient({ initialAccounts }: CuentasClientProps) {
         </div>
 
         {/* EMPTY STATE - Cuando no hay cuentas */}
-        {accounts.length === 0 ? (
+        {initialAccounts.length === 0 ? (
           <div className="flex items-center justify-center min-h-96">
             <div className="text-center max-w-sm">
               {/* Emoji grande */}
@@ -107,7 +106,7 @@ export default function CuentasClient({ initialAccounts }: CuentasClientProps) {
               <p className="text-gray-600 text-sm mb-2">Patrimonio Total</p>
               <div className="flex items-baseline gap-4">
                 <h2 className="text-4xl font-bold text-cope-text">
-                  ${accounts.reduce((sum, acc) => {
+                  ${initialAccounts.reduce((sum, acc) => {
                     const balanceInMXN = acc.currency === 'USD' ? acc.balance * 17 : acc.balance
                     return sum + balanceInMXN
                   }, 0).toLocaleString('es-MX', { maximumFractionDigits: 2 })}
@@ -115,13 +114,13 @@ export default function CuentasClient({ initialAccounts }: CuentasClientProps) {
                 <span className="text-gray-500">MXN</span>
               </div>
               <p className="text-gray-500 text-sm mt-2">
-                {accounts.length} {accounts.length === 1 ? 'cuenta' : 'cuentas'}
+                {initialAccounts.length} {initialAccounts.length === 1 ? 'cuenta' : 'cuentas'}
               </p>
             </div>
 
             {/* Tabla de Cuentas */}
             <AccountsTable
-              accounts={accounts}
+              accounts={initialAccounts}
               onEdit={handleEditAccount}
               onDelete={handleAccountCreated}
             />
