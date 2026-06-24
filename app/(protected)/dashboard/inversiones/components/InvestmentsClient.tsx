@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { Button } from '@/components/ui/Button'
 import { Container } from '@/components/ui/Container'
+import InvestmentMovementModal from './InvestmentMovementModal'
 
 interface InvestmentAccount {
   id: string
@@ -32,6 +33,7 @@ export default function InvestmentsClient({
   initialTotals,
 }: InvestmentsClientProps) {
   const [showModal, setShowModal] = useState(false)
+  const [selectedAccountId, setSelectedAccountId] = useState<string | undefined>()
 
   const formatCurrency = (amount: number) => {
     return `$${amount.toLocaleString('es-MX', {
@@ -76,7 +78,10 @@ export default function InvestmentsClient({
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-4xl font-bold text-cope-text">Mis Inversiones</h1>
           <Button
-            onClick={() => setShowModal(true)}
+            onClick={() => {
+              setSelectedAccountId(undefined)
+              setShowModal(true)
+            }}
             className="flex items-center gap-2"
           >
             <span>+</span>
@@ -211,9 +216,11 @@ export default function InvestmentsClient({
                   {/* Acciones */}
                   <td className="px-6 py-4 text-center text-sm space-x-2">
                     <button
-                      disabled
-                      className="text-cope-primary hover:text-cope-primary/80 disabled:opacity-50 disabled:cursor-not-allowed"
-                      title="Próximamente"
+                      onClick={() => {
+                        setSelectedAccountId(account.id)
+                        setShowModal(true)
+                      }}
+                      className="text-cope-primary hover:text-cope-primary/80"
                     >
                       Registrar
                     </button>
@@ -230,6 +237,18 @@ export default function InvestmentsClient({
             </tbody>
           </table>
         </div>
+
+        {/* Modal */}
+        {showModal && (
+          <InvestmentMovementModal
+            accounts={initialAccounts}
+            preSelectedAccountId={selectedAccountId}
+            onClose={() => {
+              setShowModal(false)
+              setSelectedAccountId(undefined)
+            }}
+          />
+        )}
       </Container>
     </div>
   )
