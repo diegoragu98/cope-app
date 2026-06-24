@@ -35,6 +35,12 @@ export async function createInvestmentMovement(input: CreateInvestmentMovementIn
   const supabase = await createServerClient()
 
   try {
+    // Obtener usuario actual
+    const { data: authData } = await supabase.auth.getUser()
+    if (!authData.user) {
+      return { success: false, data: null, error: 'No estás logueado' }
+    }
+
     // Validar que la cuenta sea de tipo inversión
     const { data: account, error: accountError } = await supabase
       .from('accounts')
@@ -54,6 +60,7 @@ export async function createInvestmentMovement(input: CreateInvestmentMovementIn
     const { data, error } = await supabase
       .from('investment_movements')
       .insert({
+        user_id: authData.user.id,
         account_id: input.accountId,
         amount: input.amount,
         type: input.type,
