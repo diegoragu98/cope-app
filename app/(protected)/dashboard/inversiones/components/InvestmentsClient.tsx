@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { Button } from '@/components/ui/Button'
 import { Container } from '@/components/ui/Container'
 import InvestmentMovementModal from './InvestmentMovementModal'
+import InvestmentDetailModal from './InvestmentDetailModal'
 
 interface InvestmentAccount {
   id: string
@@ -34,6 +35,8 @@ export default function InvestmentsClient({
 }: InvestmentsClientProps) {
   const [showModal, setShowModal] = useState(false)
   const [selectedAccountId, setSelectedAccountId] = useState<string | undefined>()
+  const [showDetailModal, setShowDetailModal] = useState(false)
+  const [selectedAccountForDetail, setSelectedAccountForDetail] = useState<InvestmentAccount | undefined>()
 
   const formatCurrency = (amount: number) => {
     return `$${amount.toLocaleString('es-MX', {
@@ -225,9 +228,11 @@ export default function InvestmentsClient({
                       Registrar
                     </button>
                     <button
-                      disabled
-                      className="text-gray-600 hover:text-gray-900 disabled:opacity-50 disabled:cursor-not-allowed"
-                      title="Próximamente"
+                      onClick={() => {
+                        setSelectedAccountForDetail(account)
+                        setShowDetailModal(true)
+                      }}
+                      className="text-cope-primary hover:text-cope-primary/80"
                     >
                       Ver detalle
                     </button>
@@ -238,7 +243,7 @@ export default function InvestmentsClient({
           </table>
         </div>
 
-        {/* Modal */}
+        {/* Modal de Movimientos */}
         {showModal && (
           <InvestmentMovementModal
             accounts={initialAccounts}
@@ -246,6 +251,17 @@ export default function InvestmentsClient({
             onClose={() => {
               setShowModal(false)
               setSelectedAccountId(undefined)
+            }}
+          />
+        )}
+
+        {/* Modal de Detalle */}
+        {showDetailModal && selectedAccountForDetail && (
+          <InvestmentDetailModal
+            account={selectedAccountForDetail}
+            onClose={() => {
+              setShowDetailModal(false)
+              setSelectedAccountForDetail(undefined)
             }}
           />
         )}
