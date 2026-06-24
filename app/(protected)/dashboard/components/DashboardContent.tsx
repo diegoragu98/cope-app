@@ -131,7 +131,7 @@ export default function DashboardContent({
       <div className="bg-white border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-6 py-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-1">
-            ¡Hola {userName}!
+            ¡Hola Diego!
           </h1>
           <p className="text-gray-600">
             {new Date().toLocaleDateString('es-MX', {
