@@ -2,6 +2,7 @@ import { getCurrentUser } from '@/lib/auth/actions'
 import { getUserAccounts } from '@/lib/accounts/actions'
 import { getUserCreditCards } from '@/lib/credit-cards/actions'
 import { calculatePendingBalance } from '@/lib/pending-items/actions'
+import { getInvestmentAccounts, calculateInvestmentTotals } from '@/lib/investments/actions'
 import DashboardContent from './components/DashboardContent'
 
 export const dynamic = 'force-dynamic'
@@ -42,6 +43,22 @@ export default async function DashboardPage() {
     }
   } catch (error) {
     console.error('Error loading pending balance:', error)
+  }
+
+  // Obtener inversiones (con error handling)
+  let investmentAccounts: any[] = []
+  let investmentTotals = { totalAportado: 0, totalValorActual: 0, totalGanancia: 0, distributionRF: 0, distributionRV: 0 }
+  try {
+    const accounts = await getInvestmentAccounts()
+    if (accounts && Array.isArray(accounts)) {
+      investmentAccounts = accounts
+    }
+    const totals = await calculateInvestmentTotals()
+    if (totals) {
+      investmentTotals = totals
+    }
+  } catch (error) {
+    console.error('Error loading investments:', error)
   }
 
   // Calcular patrimonio total (real)
@@ -88,6 +105,8 @@ export default async function DashboardPage() {
       pendingBalance={pendingBalance.net}
       accounts={accounts}
       creditCards={creditCards}
+      investmentAccounts={investmentAccounts}
+      investmentTotals={investmentTotals}
     />
   )
 }

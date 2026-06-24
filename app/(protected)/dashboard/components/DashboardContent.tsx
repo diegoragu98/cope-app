@@ -31,6 +31,24 @@ interface CreditCard {
   is_active: boolean
 }
 
+interface InvestmentAccount {
+  id: string
+  name: string
+  type: 'investment_rf' | 'investment_rv'
+  balance: number
+  currency: 'MXN' | 'USD'
+  aportado: number
+  ganancia: number
+}
+
+interface InvestmentTotals {
+  totalAportado: number
+  totalValorActual: number
+  totalGanancia: number
+  distributionRF: number
+  distributionRV: number
+}
+
 interface DashboardContentProps {
   userName: string
   totalPatrimony: number
@@ -41,6 +59,8 @@ interface DashboardContentProps {
   pendingBalance: number
   accounts: Account[]
   creditCards: CreditCard[]
+  investmentAccounts: InvestmentAccount[]
+  investmentTotals: InvestmentTotals
 }
 
 const ACCOUNT_TYPES: Record<string, string> = {
@@ -80,6 +100,8 @@ export default function DashboardContent({
   pendingBalance,
   accounts,
   creditCards,
+  investmentAccounts,
+  investmentTotals,
 }: DashboardContentProps) {
   // Estado para modales de cuentas
   const [updateBalanceAccount, setUpdateBalanceAccount] = useState<Account | null>(null)
@@ -168,7 +190,7 @@ export default function DashboardContent({
         </div>
 
         {/* SECCIÓN 3: KPIs SECUNDARIOS */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 mb-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-3 mb-4">
           {/* KPI 1: Disponible */}
           <div className="bg-white rounded-lg shadow p-4">
             <div className="text-xs text-gray-600 mb-1">Disponible</div>
@@ -215,6 +237,22 @@ export default function DashboardContent({
               </Link>
             </div>
           </div>
+
+          {/* KPI 5: Mis Inversiones */}
+          <Link href="/dashboard/inversiones" className="bg-white rounded-lg shadow p-4 hover:shadow-md transition-shadow cursor-pointer">
+            <div className="text-xs text-gray-600 mb-1">Mis Inversiones</div>
+            <div className="text-xl font-bold text-gray-900">
+              {investmentAccounts.length} {investmentAccounts.length === 1 ? 'instrumento' : 'instrumentos'}
+            </div>
+            <div
+              className={`text-xs font-semibold mt-2 ${
+                investmentTotals.totalGanancia >= 0 ? 'text-green-600' : 'text-red-600'
+              }`}
+            >
+              Ganancia: {investmentTotals.totalGanancia >= 0 ? '+' : '-'}
+              {formatCurrency(Math.abs(investmentTotals.totalGanancia))}
+            </div>
+          </Link>
         </div>
 
         {/* SECCIÓN 4: ACCIONES RÁPIDAS */}
