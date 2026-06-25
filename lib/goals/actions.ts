@@ -93,13 +93,31 @@ export async function createGoal(input: CreateGoalInput) {
       .single()
 
     if (error) {
-      return { success: false, data: null, error: 'Error al crear' }
+      // TODO: REVERTIR - debug temporal, NO dejar en prod.
+      // Propaga el error completo de Supabase a la UI para leer la causa real.
+      console.error('[createGoal] Supabase error:', {
+        message: error.message,
+        code: error.code,
+        details: error.details,
+        hint: error.hint,
+      })
+      return {
+        success: false,
+        data: null,
+        error: `DEBUG createGoal → message: ${error.message} | code: ${error.code} | details: ${error.details} | hint: ${error.hint}`,
+      }
     }
 
     revalidatePath('/dashboard/metas')
     return { success: true, data, error: null }
   } catch (err) {
-    return { success: false, data: null, error: 'Error inesperado' }
+    // TODO: REVERTIR - debug temporal, NO dejar en prod.
+    console.error('[createGoal] Unexpected error:', err)
+    return {
+      success: false,
+      data: null,
+      error: `DEBUG createGoal (catch) → ${err instanceof Error ? err.message : String(err)}`,
+    }
   }
 }
 
