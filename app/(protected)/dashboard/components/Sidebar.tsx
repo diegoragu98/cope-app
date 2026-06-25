@@ -18,7 +18,7 @@ export default function Sidebar({ userName }: SidebarProps) {
     { icon: '💳', label: 'Mis Tarjetas', href: '/dashboard/tarjetas', active: pathname === '/dashboard/tarjetas' },
     { icon: '📋', label: 'Pendientes', href: '/dashboard/pendientes', active: pathname === '/dashboard/pendientes' },
     { icon: '📊', label: 'Mis Inversiones', href: '/dashboard/inversiones', active: pathname === '/dashboard/inversiones' },
-    { icon: '🎯', label: 'Mis Metas', href: null, active: false, disabled: true },
+    { icon: '🎯', label: 'Mis Metas', href: '/dashboard/metas', active: pathname === '/dashboard/metas' },
     { icon: '📈', label: 'Análisis', href: null, active: false, disabled: true },
   ]
 
